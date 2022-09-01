@@ -23,6 +23,7 @@ pwd
 : ' Problem 2: Use ls with flags to print one list of the contents of
 Shell1/, including hidden files and folders, listing contents in long
 format, and sorting output by file size. '
+ls -alS
 
 
 : ' Problem 3: Inside the Shell1/ directory, delete the Audio/ folder
