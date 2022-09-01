@@ -16,7 +16,8 @@ echo "Done"
 : ' Problem 1: In the space below, write commands to change into the
 Shell1/ directory and print a string telling you the current working
 directory. '
-
+cd Shell1
+pwd
 
 
 : ' Problem 2: Use ls with flags to print one list of the contents of
