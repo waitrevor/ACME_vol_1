@@ -1,6 +1,6 @@
 import calculator
 import box
-from itertools import combinations
+from itertools import chain, combinations
 import random
 import time
 
@@ -83,6 +83,7 @@ def power_set(A):
     Returns:
         (list(sets)): The power set of A as a list of sets.
     """
+
     L = []
 
     for i in range(len(A) + 1):
@@ -90,17 +91,69 @@ def power_set(A):
 
     return L
 
+
 # Problem 5: Implement shut the box.
 def shut_the_box(player, timelimit):
     """Play a single game of shut the box."""
     
-    numbers_left = [1,2,3,4,5,6,7,8,9]
+    remaining = [1,2,3,4,5,6,7,8,9]
     time_left = timelimit
+    win = False
+    start = time.time()
+    score = 0
     while time_left > 0:
-        sum = random.randint(2,12)
+        
+        roll = random.randint(2,12)
+        print('Numbers left: ', remaining)
+        print('Roll: ', roll)
+        print('Seconds left: ', time_left)
+        if box.isvalid(roll, remaining) == True:
+            
+            user_input = input('Numbers to eliminate: ' )
+            x = box.parse_input(user_input, remaining)
+            
+
+            while len(x) == 0:
+                time_left = round(timelimit - (time.time()- start), 2)
+                print('Seconds left: ', time_left)
+                print('Invalid input')
+                x = box.parse_input(input('Numbers to eliminate: ' ), remaining)
+
+            while sum(x) != roll:
+                time_left = round(timelimit - (time.time()- start), 2)
+                print('Seconds left: ', time_left)
+                print('Invalid input')
+                x = box.parse_input(input('Numbers to eliminate: ' ), remaining)
+            
+            for i in range(len(x)):
+                remaining.remove(x[i])
+                            
+        elif remaining == []:
+            win = True
+            break
+        
+        else:
+            win = False
+            break
+        
+            
 
 
-        if numbers_left == []:
-            print("Win") 
-            break  
+        end = time.time()
+        time_left = round(timelimit - (end - start), 2)
 
+    time_played = timelimit - time_left
+
+    if(win == True):
+        print('\n')
+        print("Score for plaer ", player, ": ", score, " points", "\n", "Time Played: ", round(time_played, 2), " seconds", '\n', 'Congratulations!! You shut the box!')
+    else:
+
+        for i in range(len(remaining)):
+            score += remaining[i]
+
+        print("Score for plaer ", player, ": ", score, " points", "\n", "Time Played: ", round(time_played, 2), " seconds", '\n', 'Better luck next time >:)')
+
+
+#testing
+shut_the_box('Trevor', 10)
