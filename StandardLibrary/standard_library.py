@@ -3,6 +3,7 @@ import box
 from itertools import chain, combinations
 import random
 import time
+import sys
 
 # standard_library.py
 """Python Essentials: The Standard Library.
@@ -97,13 +98,18 @@ def shut_the_box(player, timelimit):
     """Play a single game of shut the box."""
     
     remaining = [1,2,3,4,5,6,7,8,9]
-    time_left = timelimit
+    time_left = int(timelimit)
     win = False
     start = time.time()
-    score = 0
+    score = 45
+
     while time_left > 0:
-        
-        roll = random.randint(2,12)
+
+        if score > 6:
+            roll = random.randint(2,12)
+        else:
+            roll = random.randint(1,6)
+
         print('Numbers left: ', remaining)
         print('Roll: ', roll)
         print('Seconds left: ', time_left)
@@ -114,19 +120,20 @@ def shut_the_box(player, timelimit):
             
 
             while len(x) == 0:
-                time_left = round(timelimit - (time.time()- start), 2)
+                time_left = round(int(timelimit) - (time.time()- start), 2)
                 print('Seconds left: ', time_left)
                 print('Invalid input')
                 x = box.parse_input(input('Numbers to eliminate: ' ), remaining)
 
             while sum(x) != roll:
-                time_left = round(timelimit - (time.time()- start), 2)
+                time_left = round(int(timelimit) - (time.time()- start), 2)
                 print('Seconds left: ', time_left)
                 print('Invalid input')
                 x = box.parse_input(input('Numbers to eliminate: ' ), remaining)
             
             for i in range(len(x)):
                 remaining.remove(x[i])
+                score -= sum(x)
                             
         elif remaining == []:
             win = True
@@ -140,20 +147,24 @@ def shut_the_box(player, timelimit):
 
 
         end = time.time()
-        time_left = round(timelimit - (end - start), 2)
+        time_left = round(int(timelimit) - (end - start), 2)
 
-    time_played = timelimit - time_left
+    time_played = int(timelimit) - time_left
 
     if(win == True):
         print('\n')
-        print("Score for plaer ", player, ": ", score, " points", "\n", "Time Played: ", round(time_played, 2), " seconds", '\n', 'Congratulations!! You shut the box!')
+        print("Score for player", player, ": ", score, " points", "\n", "Time Played:", round(time_played, 2), " seconds", '\n', 'Congratulations!! You shut the box!')
     else:
 
         for i in range(len(remaining)):
             score += remaining[i]
 
-        print("Score for plaer ", player, ": ", score, " points", "\n", "Time Played: ", round(time_played, 2), " seconds", '\n', 'Better luck next time >:)')
+        print("Score for player", player, ": ", score, " points", "\n", "Time Played:", round(time_played, 2), " seconds", '\n', 'Better luck next time >:)')
 
+
+if __name__ == "__main__":
+    if len(sys.argv) == 3:
+        shut_the_box(sys.argv[1], sys.argv[2])
 
 #testing
-shut_the_box('Trevor', 10)
+
