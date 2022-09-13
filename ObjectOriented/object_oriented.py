@@ -1,10 +1,10 @@
 # object_oriented.py
 """Python Essentials: Object Oriented Programming.
-<Name>
-<Class>
-<Date>
+<Name> Trevor Wai
+<Class> Section 2
+<Date> 9/13/22
 """
-
+import math
 
 class Backpack:
     """A Backpack object class. Has a name and a list of contents.
@@ -15,22 +15,42 @@ class Backpack:
     """
 
     # Problem 1: Modify __init__() and put(), and write dump().
-    def __init__(self, name):
+    def __init__(self, name, color, max_size = 5):
         """Set the name and initialize an empty list of contents.
 
         Parameters:
             name (str): the name of the backpack's owner.
+            color (str): the color of the backpack
+            max_size (int): The max number of items the backpack can hold
         """
         self.name = name
         self.contents = []
+        #Makes max_size default to 5
+        self.max_size = max_size
+        #Stores color as an attribute
+        self.color = color
+
 
     def put(self, item):
-        """Add an item to the backpack's list of contents."""
-        self.contents.append(item)
+        """Checks to make sure the backpack isn't at max capacity.
+        If the backpack isn't at max capacity Add an item to the backpack's list of contents."""
+        #If statment to check to see if the backpack is at max capacity
+        if len(self.contents) >= self.max_size:
+            #Prints no room and doesn't add any items to the backpack
+            print("No room!")
+        else:
+            self.contents.append(item)
 
     def take(self, item):
         """Remove an item from the backpack's list of contents."""
         self.contents.remove(item)
+
+    #function to get rid of all the contents of the backpack
+    def dump(self):
+        """Removes all the items from the backpack's list of contents."""
+        #removes all the contents of the backpack
+        self.contents.clear()
+
 
     # Magic Methods -----------------------------------------------------------
 
@@ -44,6 +64,14 @@ class Backpack:
         than 'other', return True. Otherwise, return False.
         """
         return len(self.contents) < len(other.contents)
+
+    def __eq__(self, other):
+        """Compares two backpack objects."""
+        return self.name == other.name and self.color == other.color and len(self.contents) == len(other.contents)
+
+    def __str__(self):
+        """Prints the Backpack"""
+        return f"Owner:\t\t{self.name}\nColor:\t\t{self.color}\nSize:\t\t{len(self.contents)}\nMax Size:\t{self.max_size}\nContents:\t{self.contents}"
 
 
 # An example of inheritance. You are not required to modify this class.
@@ -92,6 +120,77 @@ class Knapsack(Backpack):
 
 
 # Problem 2: Write a 'Jetpack' class that inherits from the 'Backpack' class.
+class Jetpack(Backpack):
 
+    def __init__(self, name, color, fuel = 10):
+
+        Backpack.__init__(self, name, color, max_size = 2)
+        self.fuel = fuel
+
+    def fly(self, amount):
+        if self.fuel > amount:
+            self.fuel -= amount
+        else:
+            print("Not enough Fuel!")
+
+    def dump(self):
+        self.fuel = 0
+        Backpack.dump(self)
 
 # Problem 4: Write a 'ComplexNumber' class.
+
+class ComplexNumber:
+
+    def __init__(self, real, imag):
+        self.real = real
+        self.imag = imag
+
+    def conjugate(self):
+        return  ComplexNumber(self.real, -self.imag)
+
+    def __str__(self):
+        if self.imag < 0:
+            return f"({self.real}-{self.imag}j)"
+        else:
+            return f"({self.real}+{self.imag}j)"
+
+    def __abs__(self):
+        return abs(math.sqrt(self.real**2 + self.imag**2))
+
+    def __eq__(self, other):
+        return self.real == other.real and self.imag == other.imag
+
+    def __add__(self, other):
+        return ComplexNumber(self.real + other.real, self.imag + other.imag)
+
+    def __sub__(self, other):
+        return ComplexNumber(self.real - other.real, self.imag - other.imag)
+
+    def __mul__(self, other):
+        return ComplexNumber(self.real * other.real - self.imag * other.imag, self.real * other.imag + self.imag * other.real)
+
+    def __truediv__(self, other):
+        r_top = self.__mul__(other.conjugate()).real
+        i_top = self.__mul__(other.conjugate()).imag
+        bot = other.real**2 + other.imag**2
+        return ComplexNumber(r_top / bot, i_top / bot)
+
+
+#Testing
+
+def test_backpack():
+    testpack = Backpack("Barry", "black")
+    if testpack.name != "Barry":
+        print("Backpack name is incorrect")
+    for item in ["pencil", "pen", "paper", "computer", "Other stuff"]:
+        testpack.put(item)
+    testpack.put("more stuff")
+    
+    print(testpack)
+
+
+def test_Complex():
+    testcomplex = ComplexNumber(1, 2)
+    print(testcomplex.__truediv__(ComplexNumber(3,4)))
+
+test_Complex()
