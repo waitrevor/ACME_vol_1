@@ -1,0 +1,29 @@
+09/15/22 17:40
+
+Problem 1 (10 points):
+Score += 10
+
+Problem 2 (10 points):
+TypeError: __init__() got an unexpected keyword argument 'max_size'
+
+Problem 3 (10 points):
+Score += 10
+
+Problem 4 (15 points):
+ComplexNumber.__str__() failed for b < 0
+	Correct response: '(-30-9j)'
+	Student response: '(-30--9j)'
+Score += 14
+
+Code Quality (5 points):
+Include a comment or description of each method in each class
+Score += 3
+
+Total score: 37/50 = 74.0%
+
+
+Comments:
+	Great start! Come to office hours with any questions!
+
+-------------------------------------------------------------------------------
+
