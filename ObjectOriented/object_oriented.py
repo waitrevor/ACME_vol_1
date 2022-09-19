@@ -122,9 +122,9 @@ class Knapsack(Backpack):
 # Problem 2: Write a 'Jetpack' class that inherits from the 'Backpack' class.
 class Jetpack(Backpack):
 
-    def __init__(self, name, color, fuel = 10):
+    def __init__(self, name, color, fuel = 10, max_size = 2):
 
-        Backpack.__init__(self, name, color, max_size = 2)
+        Backpack.__init__(self, name, color, max_size)
         self.fuel = fuel
 
     def fly(self, amount):
@@ -150,7 +150,7 @@ class ComplexNumber:
 
     def __str__(self):
         if self.imag < 0:
-            return f"({self.real}-{self.imag}j)"
+            return f"({self.real}{self.imag}j)"
         else:
             return f"({self.real}+{self.imag}j)"
 
@@ -190,7 +190,7 @@ def test_backpack():
 
 
 def test_Complex():
-    testcomplex = ComplexNumber(1, 2)
-    print(testcomplex.__truediv__(ComplexNumber(3,4)))
+    testcomplex = ComplexNumber(1, -2)
+    print(testcomplex)
 
 test_Complex()
