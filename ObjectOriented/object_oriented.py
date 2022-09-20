@@ -4,6 +4,7 @@
 <Class> Section 2
 <Date> 9/13/22
 """
+from cgi import test
 import math
 
 class Backpack:
@@ -25,7 +26,7 @@ class Backpack:
         """
         self.name = name
         self.contents = []
-        #Makes max_size default to 5
+        #Stores max_size as an attribute
         self.max_size = max_size
         #Stores color as an attribute
         self.color = color
@@ -39,13 +40,14 @@ class Backpack:
             #Prints no room and doesn't add any items to the backpack
             print("No room!")
         else:
+            #If the backpack is not at max capacity adds the item
             self.contents.append(item)
 
     def take(self, item):
         """Remove an item from the backpack's list of contents."""
+        #Removes a specified item from the backpack
         self.contents.remove(item)
 
-    #function to get rid of all the contents of the backpack
     def dump(self):
         """Removes all the items from the backpack's list of contents."""
         #removes all the contents of the backpack
@@ -67,10 +69,12 @@ class Backpack:
 
     def __eq__(self, other):
         """Compares two backpack objects."""
+        #returns true if the name and color and length of both backpacks are the same
         return self.name == other.name and self.color == other.color and len(self.contents) == len(other.contents)
 
     def __str__(self):
         """Prints the Backpack"""
+        #Prints all the attributes of the backpack
         return f"Owner:\t\t{self.name}\nColor:\t\t{self.color}\nSize:\t\t{len(self.contents)}\nMax Size:\t{self.max_size}\nContents:\t{self.contents}"
 
 
@@ -123,17 +127,24 @@ class Knapsack(Backpack):
 class Jetpack(Backpack):
 
     def __init__(self, name, color, fuel = 10, max_size = 2):
+        #Defines constructor
 
         Backpack.__init__(self, name, color, max_size)
+        #Initializes fuel attribute
         self.fuel = fuel
 
     def fly(self, amount):
+        """fly method that accepts an amount of fuel and
+         returns the origional fuel amount minus the input amount"""
         if self.fuel > amount:
             self.fuel -= amount
         else:
+            #Returns not enough if the amount input is greater than fuel in the jetpack
             print("Not enough Fuel!")
 
     def dump(self):
+        """Dumps all the fuel out of the backpack"""
+        #Sets fuel amount to zero
         self.fuel = 0
         Backpack.dump(self)
 
@@ -142,55 +153,46 @@ class Jetpack(Backpack):
 class ComplexNumber:
 
     def __init__(self, real, imag):
+        #Defines the constructor and initializes attributes
         self.real = real
         self.imag = imag
 
     def conjugate(self):
+        #Returns the conjugate of the complex number
         return  ComplexNumber(self.real, -self.imag)
 
     def __str__(self):
+        #Prints complex number
         if self.imag < 0:
             return f"({self.real}{self.imag}j)"
         else:
             return f"({self.real}+{self.imag}j)"
 
     def __abs__(self):
+        #Returns the magnitude of the complex number
         return abs(math.sqrt(self.real**2 + self.imag**2))
 
     def __eq__(self, other):
+        #compares two complex numbers
         return self.real == other.real and self.imag == other.imag
 
     def __add__(self, other):
+        #adds two complex numbers together
         return ComplexNumber(self.real + other.real, self.imag + other.imag)
 
     def __sub__(self, other):
+        #subtracts two complex numbers
         return ComplexNumber(self.real - other.real, self.imag - other.imag)
 
     def __mul__(self, other):
+        #multiplies two complex numbers
         return ComplexNumber(self.real * other.real - self.imag * other.imag, self.real * other.imag + self.imag * other.real)
 
     def __truediv__(self, other):
+        #divides two complex numbers
         r_top = self.__mul__(other.conjugate()).real
         i_top = self.__mul__(other.conjugate()).imag
         bot = other.real**2 + other.imag**2
+        #returns quotient of two complex numbers
         return ComplexNumber(r_top / bot, i_top / bot)
 
-
-#Testing
-
-def test_backpack():
-    testpack = Backpack("Barry", "black")
-    if testpack.name != "Barry":
-        print("Backpack name is incorrect")
-    for item in ["pencil", "pen", "paper", "computer", "Other stuff"]:
-        testpack.put(item)
-    testpack.put("more stuff")
-    
-    print(testpack)
-
-
-def test_Complex():
-    testcomplex = ComplexNumber(1, -2)
-    print(testcomplex)
-
-test_Complex()
