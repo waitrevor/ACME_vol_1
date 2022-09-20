@@ -196,3 +196,17 @@ class ComplexNumber:
         #returns quotient of two complex numbers
         return ComplexNumber(r_top / bot, i_top / bot)
 
+#testing 
+
+def test_ComplexNumber(a, b):
+    py_cnum, my_cnum = complex(a, b), ComplexNumber(a, b)
+    # Validate the constructor.
+    if my_cnum.real != a or my_cnum.imag != b:
+        print("__init__() set self.real and self.imag incorrectly")
+    # Validate conjugate() by checking the new number's imag attribute.
+    if py_cnum.conjugate().imag != my_cnum.conjugate().imag:
+        print("conjugate() failed for", py_cnum)
+    # Validate __str__().
+    if str(py_cnum) != str(my_cnum):
+        print("__str__() failed for", py_cnum)
+
