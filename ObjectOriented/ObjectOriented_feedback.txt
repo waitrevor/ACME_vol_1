@@ -27,3 +27,31 @@ Comments:
 
 -------------------------------------------------------------------------------
 
+09/20/22 09:22
+
+Problem 1 (10 points):
+Score += 10
+
+Problem 2 (10 points):
+Jetpack.__init__() has no docstring.
+Score += 9
+
+Problem 3 (10 points):
+Score += 10
+
+Problem 4 (15 points):
+Score += 15
+
+Code Quality (5 points):
+Score += 5
+
+Total score: 49/50 = 98.0%
+
+Excellent!
+
+
+Comments:
+	Great work!
+
+-------------------------------------------------------------------------------
+
