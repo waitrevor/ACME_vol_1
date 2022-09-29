@@ -10,3 +10,27 @@ KeyboardInterrupt while loading 'exceptions_fileIO.py':
 
 -------------------------------------------------------------------------------
 
+09/27/22 09:17
+
+Problem 1 (5 points):
+Score += 5
+
+Problem 2 (5 points):
+Score += 5
+
+Problem 3 (10 points):
+Score += 10
+
+Problem 4 (25 points):
+ContentFilter.transpose('_OUT_', mode='w') failed
+Score += 22
+
+Code Quality (5 points):
+Score += 5
+
+Total score: 47/50 = 94.0%
+
+Great job!
+
+-------------------------------------------------------------------------------
+
