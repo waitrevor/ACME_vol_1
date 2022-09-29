@@ -156,33 +156,43 @@ def prob3():
     that your figure accurately describes the growth, but avoid values of n
     that lead to execution times of more than 1 minute.
     """
+    #Time lists
     mvTime = []
     mmTime = []
+    #Domain
     domain = 2**np.arange(1,9)
+
+    #Loops through the domain
     for n in domain:
+        #Creates a two random matrices and a vector
         matrixOne = random_matrix(n)
         matrixTwo = random_matrix(n)
         vector = random_vector(n)
+        #Calculates how long it takes matrix-matrix
         start = time()
         matrix_matrix_product(matrixOne, matrixTwo)
         mmTime.append(time() - start)
+        #Calculates how long it takes for matrix-vector
         start = time()
         matrix_vector_product(matrixOne, vector)
         mvTime.append(time() - start)
 
     plt.subplot(122)
+    #Plots the matrix-vector multiplication
     plt.subplot(121)
     plt.plot(domain, mvTime)
     plt.xlabel('x-axis')
     plt.ylabel('y-axis')
     plt.title('Matrix-Vector Multiplication')
 
+    #Plots the matrix matrix multiplication
     plt.subplot(122)
     plt.plot(domain, mmTime)
     plt.xlabel('x-axis')
     plt.ylabel('y-axis')
     plt.title('Matrix-Matrix Multiplication')
 
+    #Shows the graph
     plt.tight_layout()
     plt.show()
 
@@ -195,46 +205,61 @@ def prob4():
     four sets of execution times on a regular linear scale, and one with all
     four sets of exections times on a log-log scale.
     """
+    #Initializes variables
     mvTime = []
     mvDotTime = []
     mmDotTime = []
     mmTime = []
     domain = 2**np.arange(1,9)
+
+    #Loops through the domain
     for n in domain:
+        #Creates random matrices and a random vector
         matrixOne = random_matrix(n)
         matrixTwo = random_matrix(n)
         vector = random_vector(n)
+        #Time it takes for matrix matrix multiplication
         start = time()
         matrix_matrix_product(matrixOne, matrixTwo)
         mmTime.append(time() - start)
+        #Time it takes for matrix matrix dot product
         start = time()
         np.dot(matrixOne, matrixTwo)
         mmDotTime.append(time() - start)
+        #Time it takes for matrix vector multiplication
         start = time()
         matrix_vector_product(matrixOne, vector)
         mvTime.append(time() - start)
+        #Time it takes for matrix vector dot product
         start = time()
         np.dot(matrixOne, vector)
         mvDotTime.append(time() - start)
 
     plt.subplot(122)
+    #Linear scale graph of the time
     plt.subplot(121)
     plt.plot(domain,mvTime)
     plt.plot(domain, mmTime)
-    plt.xlabel('x-axis')
-    plt.ylabel('y-axis')
-    plt.title('Multiplication Graph')
-    plt.legend(['Matrix-Vector', 'Matrix-Matrix'])
-    
-
-    plt.subplot(122)
     plt.plot(domain,mvDotTime)
     plt.plot(domain, mmDotTime)
+    #Labels and Titles graph
     plt.xlabel('x-axis')
     plt.ylabel('y-axis')
-    plt.title('Dot Graph')
-
+    plt.title('Linear Scale Graph')
+    plt.legend(['Matrix-Vector', 'Matrix-Matrix', 'Matrix-Dot-Vector', 'Matrix-Dot-Matrix'])
     
+    #LogLog scale graph of the time
+    plt.subplot(122)
+    plt.loglog(domain, mvTime, base=2, lw=2)
+    plt.loglog(domain, mmTime, base=2, lw=2)
+    plt.loglog(domain, mvDotTime, base=2, lw=2)
+    plt.loglog(domain, mmDotTime, base=2, lw=2)
+    #Lables and titles graph
+    plt.xlabel('x-axis')
+    plt.ylabel('y-axis')
+    plt.title('Log-Log Graph')
+
+    #Show the graph
     plt.tight_layout()
     plt.show()
 
