@@ -21,3 +21,31 @@ Excellent!
 
 -------------------------------------------------------------------------------
 
+10/06/22 17:28
+
+Problem 1 (10 points):
+Score += 10
+
+Problem 2 (15 points):
+Score += 15
+
+Problem 3 (10 points):
+Score += 10
+
+Problem 4 (10 points):
+Label which of the lines are using numpy
+Score += 9
+
+Code Quality (5 points):
+Score += 5
+
+Total score: 49/50 = 98.0%
+
+Excellent!
+
+
+Comments:
+	Looks great! Make sure your code isn't running anything from main when you submit it
+
+-------------------------------------------------------------------------------
+
