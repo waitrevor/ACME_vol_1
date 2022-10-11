@@ -246,7 +246,7 @@ def prob4():
     plt.xlabel('x-axis')
     plt.ylabel('y-axis')
     plt.title('Linear Scale Graph')
-    plt.legend(['Matrix-Vector', 'Matrix-Matrix', 'Matrix-Dot-Vector', 'Matrix-Dot-Matrix'])
+    plt.legend(['Matrix-Vector', 'Matrix-Matrix', 'numpy-Matrix-Vector', 'numpy-Matrix-Matrix'])
     
     #LogLog scale graph of the time
     plt.subplot(122)
@@ -264,20 +264,3 @@ def prob4():
     plt.show()
 
 
-#testing
-
-# horse = np.load('horse.npy')
-
-# def showplot(A):
-# #   # This function displays the image produce by the collection of coordinates given in H
-#     cougarplot=plt.plot(A[0,:],A[1,:],'k.',markersize=3.5)
-#     plt.axis([-1.5,1.5,-1.5,1.5])
-#     plt.gca().set_aspect("equal")
-#     plt.show()
-#     return None
-
-
-# # # Let's test the function above by plotting the data in our NumPy array cougar  
-# showplot(rotate(horse,np.pi/2))
-
-prob4()
