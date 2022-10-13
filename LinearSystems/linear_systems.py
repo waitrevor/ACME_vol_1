@@ -4,8 +4,12 @@
 <Class> Section 2
 <Date> 10/11/22
 """
-from audioop import reverse
 import numpy as np
+from scipy import linalg as la
+from scipy import sparse
+from scipy.sparse import linalg as spla
+from time import time
+from matplotlib import pyplot as plt
 
 # Problem 1
 def ref(A):
@@ -25,7 +29,6 @@ def ref(A):
             if j > k:
                 A[j] = A[j] - A[j,i] * (A[k]/A[k,i])
             else:
-    
                 continue
         k += 1
     return A
@@ -101,6 +104,49 @@ def prob4():
     Plot the system size n versus the execution times. Use log scales if
     needed.
     """
+    L1 = []
+    L2 = []
+    L3 = []
+    L4 = []
+
+    domain = 2**np.arange(1, 13)
+    
+    for n in domain:
+        A = np.random.random((n,n))
+        b = np.random.random(n)
+        start = time()
+        ans1 = np.matmul(la.inv(A),b)
+        end = time() - start
+        L1.append(end)
+
+        start = time()
+        ans2 = la.solve(A, b)
+        end = time() - start
+        L2.append(end)
+
+        start = time()
+        L, P = la.lu_factor(A)
+        x = la.lu_solve((L,P), b)
+        end = time() - start
+        L3.append(end)
+
+        L , P = la.lu_factor(A)
+        start = time()
+        x = la.lu_solve((L,P), b)
+        end = time() - start
+        L4.append(end)
+
+    plt.plot(domain, L1)
+    plt.plot(domain, L2)
+    plt.plot(domain, L3)
+    plt.plot(domain, L4)
+    plt.title("Different Methods to solve Ax = b")
+    plt.legend(["la.inv()", "la.solve()", "la.lu_factor() and la.lu_solve()", "la.lu_solve()"])
+    plt.xlabel("n")
+    plt.ylabel("time")
+    plt.tight_layout()
+    plt.show()
+
     
 
 
@@ -121,6 +167,13 @@ def prob5(n):
     Returns:
         A ((n**2,n**2) SciPy sparse matrix)
     """
+    B = sparse.diags([1,-4,1], [-1, 0, 1], shape=(n,n))
+    A = sparse.block_diag([B] * n)
+
+    A.setdiag(1,-n)
+    A.setdiag(1,n)
+
+    return A
     
 
 
@@ -141,10 +194,10 @@ def prob6():
     appropriate and use a legend to label each line.
     """
     
+    
 
 #Testing
 
 A = np.array([[1,1,1],[1,4,2],[4,7,8]])
 b = np.random.random(3)
-print(b)
-print(A @ solve(A,b))
+prob4()
