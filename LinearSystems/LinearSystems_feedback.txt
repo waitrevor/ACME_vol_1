@@ -1,0 +1,29 @@
+10/13/22 17:08
+
+Problem 1 (10 points):
+Score += 10
+
+Problem 2 (10 points):
+Score += 10
+
+Problem 3 (10 points):
+Score += 10
+
+Problem 4 (5 points):
+Score += 5
+
+Problem 5 (5 points):
+Score += 5
+
+Problem 6 (5 points):
+I didn't see a plot, so I had nothing to go off of.
+Score += 0
+
+Code Quality (5 points):
+Clear code, add comments to give some slight intuition in your loops
+Score += 3
+
+Total score: 43/50 = 86.0%
+
+-------------------------------------------------------------------------------
+
