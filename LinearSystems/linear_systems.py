@@ -1,10 +1,11 @@
 # linear_systems.py
 """Volume 1: Linear Systems.
-<Name>
-<Class>
-<Date>
+<Name> Trevor Wai
+<Class> Section 2
+<Date> 10/11/22
 """
-
+from audioop import reverse
+import numpy as np
 
 # Problem 1
 def ref(A):
@@ -18,7 +19,17 @@ def ref(A):
     Returns:
         ((n,n) ndarray): The REF of A.
     """
-    raise NotImplementedError("Problem 1 Incomplete")
+    k = 0
+    for i in range(len(A)):
+        for j in range(len(A)):
+            if j > k:
+                A[j] = A[j] - A[j,i] * (A[k]/A[k,i])
+            else:
+    
+                continue
+        k += 1
+    return A
+
 
 
 # Problem 2
@@ -33,7 +44,16 @@ def lu(A):
         L ((n,n) ndarray): The lower-triangular part of the decomposition.
         U ((n,n) ndarray): The upper-triangular part of the decomposition.
     """
-    raise NotImplementedError("Problem 2 Incomplete")
+    m,n = np.shape(A)
+    U = np.copy(A)
+    L = np.eye(m)
+    for j in range(0, n):
+        for i in range(j + 1, m):
+                L[i][j] = U[i][j] / U[j][j]
+                U[i][j:] = U[i][j:] - L[i][j] * U[j][j:]
+
+
+    return L,U
 
 
 # Problem 3
@@ -48,7 +68,19 @@ def solve(A, b):
     Returns:
         x ((m,) ndarray): The solution to the linear system.
     """
-    raise NotImplementedError("Problem 3 Incomplete")
+    m,n = np.shape(A)
+    L,U = lu(A)
+    y = np.zeros(n)
+    x = np.zeros(n)
+
+    for i in range(n):
+        y[i] = b[i] - (L[i,:i] @ y[:i]) 
+
+    for j in reversed(range(n)):
+        x[j] = (y[j] - (U[j,:] @ x)) / U[j,j]
+
+    return x
+    
 
 
 # Problem 4
@@ -69,7 +101,7 @@ def prob4():
     Plot the system size n versus the execution times. Use log scales if
     needed.
     """
-    raise NotImplementedError("Problem 4 Incomplete")
+    
 
 
 # Problem 5
@@ -89,7 +121,7 @@ def prob5(n):
     Returns:
         A ((n**2,n**2) SciPy sparse matrix)
     """
-    raise NotImplementedError("Problem 5 Incomplete")
+    
 
 
 # Problem 6
@@ -108,4 +140,11 @@ def prob6():
     size n**2 versus the execution times. As always, use log scales where
     appropriate and use a legend to label each line.
     """
-    raise NotImplementedError("Problem 6 Incomplete")
+    
+
+#Testing
+
+A = np.array([[1,1,1],[1,4,2],[4,7,8]])
+b = np.random.random(3)
+print(b)
+print(A @ solve(A,b))
