@@ -193,11 +193,7 @@ def prob6():
     size n**2 versus the execution times. As always, use log scales where
     appropriate and use a legend to label each line.
     """
-    
+
     
 
 #Testing
-
-A = np.array([[1,1,1],[1,4,2],[4,7,8]])
-b = np.random.random(3)
-prob4()
