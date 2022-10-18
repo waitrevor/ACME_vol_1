@@ -8,8 +8,8 @@ import numpy as np
 from scipy import linalg as la
 from scipy import sparse
 from scipy.sparse import linalg as spla
-from time import time
-from matplotlib import pyplot as plt
+import time
+import matplotlib.pyplot as plt
 
 # Problem 1
 def ref(A):
@@ -23,14 +23,19 @@ def ref(A):
     Returns:
         ((n,n) ndarray): The REF of A.
     """
+    #Initiates the count to zero
     k = 0
+    #Loops through the matrix column
     for i in range(len(A)):
+        #Loops through the row
         for j in range(len(A)):
+            #Updates the row if needed
             if j > k:
                 A[j] = A[j] - A[j,i] * (A[k]/A[k,i])
             else:
                 continue
         k += 1
+    #Returns the matrix
     return A
 
 
@@ -47,11 +52,16 @@ def lu(A):
         L ((n,n) ndarray): The lower-triangular part of the decomposition.
         U ((n,n) ndarray): The upper-triangular part of the decomposition.
     """
+    #Gets the dimensions of the matrix A
     m,n = np.shape(A)
+    #Initializes the Lower triangular and upper triangular matrices
     U = np.copy(A)
     L = np.eye(m)
+    #loops through columns
     for j in range(0, n):
+        #loops through rows
         for i in range(j + 1, m):
+                #updates the elements to return the upper and lower triangular matrix
                 L[i][j] = U[i][j] / U[j][j]
                 U[i][j:] = U[i][j:] - L[i][j] * U[j][j:]
 
@@ -71,14 +81,17 @@ def solve(A, b):
     Returns:
         x ((m,) ndarray): The solution to the linear system.
     """
+    #Initialize Variables
     m,n = np.shape(A)
     L,U = lu(A)
     y = np.zeros(n)
     x = np.zeros(n)
 
+    #Solves for y
     for i in range(n):
         y[i] = b[i] - (L[i,:i] @ y[:i]) 
 
+    #Uses y to solve for x
     for j in reversed(range(n)):
         x[j] = (y[j] - (U[j,:] @ x)) / U[j,j]
 
@@ -104,46 +117,59 @@ def prob4():
     Plot the system size n versus the execution times. Use log scales if
     needed.
     """
+    #Initialize empty lists
     L1 = []
     L2 = []
     L3 = []
     L4 = []
 
+    #Find the domain 
     domain = 2**np.arange(1, 13)
     
+    #loops through domain
     for n in domain:
+
+        #Times the function np.matmul()
         A = np.random.random((n,n))
         b = np.random.random(n)
-        start = time()
+        start = time.time()
         ans1 = np.matmul(la.inv(A),b)
-        end = time() - start
+        end = time.time() - start
         L1.append(end)
 
-        start = time()
+        #Times the function la.solve()
+        start = time.time()
         ans2 = la.solve(A, b)
-        end = time() - start
+        end = time.time() - start
         L2.append(end)
 
-        start = time()
+        #Times the function la.lu_factor() and la.lu_solve()
+        start = time.time()
         L, P = la.lu_factor(A)
         x = la.lu_solve((L,P), b)
-        end = time() - start
+        end = time.time() - start
         L3.append(end)
 
+        #Times the function just la.lu_solve()
         L , P = la.lu_factor(A)
-        start = time()
+        start = time.time()
         x = la.lu_solve((L,P), b)
-        end = time() - start
+        end = time.time() - start
         L4.append(end)
 
+    #Plots the lists onto graphs
     plt.plot(domain, L1)
     plt.plot(domain, L2)
     plt.plot(domain, L3)
     plt.plot(domain, L4)
+
+    #Lables x and y axis and gives a title and legend
     plt.title("Different Methods to solve Ax = b")
     plt.legend(["la.inv()", "la.solve()", "la.lu_factor() and la.lu_solve()", "la.lu_solve()"])
     plt.xlabel("n")
     plt.ylabel("time")
+
+    #Shows the graph
     plt.tight_layout()
     plt.show()
 
@@ -167,9 +193,13 @@ def prob5(n):
     Returns:
         A ((n**2,n**2) SciPy sparse matrix)
     """
+    #Creates the matrix B
     B = sparse.diags([1,-4,1], [-1, 0, 1], shape=(n,n))
+
+    #Creates the block matrix A with B along the diagonal
     A = sparse.block_diag([B] * n)
 
+    #Sets the offsets of A to be the indentity matrices
     A.setdiag(1,-n)
     A.setdiag(1,n)
 
@@ -193,7 +223,49 @@ def prob6():
     size n**2 versus the execution times. As always, use log scales where
     appropriate and use a legend to label each line.
     """
+    #Set domain
+    domain = 2**np.arange(1, 5)
 
+    #Initialize lists
+    L1 = []
+    L2 = []
+
+    #Loops through the domain
+    for n in domain:
+
+        #Initializes A and b
+        A = prob5(n)
+
+        b = np.random.random(n**2)
+
+        
+        #Plots the time it takes for spla.spsolve()
+        Acsr = A.tocsr()
+        start = time.time()
+        y = spla.spsolve(Acsr, b)
+        end = time.time() - start
+        L1.append(end)
+
+        #Plots the time it takes for la.solve()
+        Anumpy = A.toarray()
+        start = time.time()
+        x = la.solve(Anumpy, b)
+        end = time.time() - start
+        L2.append(end)
+
+    #Plots the lists onto graphs
+    plt.loglog(domain, L1, base=2)
+    plt.loglog(domain, L2, base=2)
     
 
-#Testing
+    #Lables x and y axis and gives a title and legend
+    plt.title("Different Methods to solve Ax = b")
+    plt.legend(["spla.spsolve()", "la.solve()"])
+    plt.xlabel("n")
+    plt.ylabel("time")
+
+    #Shows the graph
+    plt.tight_layout()
+    plt.show()
+
+    
