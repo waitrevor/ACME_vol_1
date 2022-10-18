@@ -18,14 +18,21 @@ def qr_gram_schmidt(A):
         Q ((m,n) ndarray): An orthonormal matrix.
         R ((n,n) ndarray): An upper triangular matrix.
     """
+    #Initializes variables
     m, n = A.shape
     Q = A.copy().astype('float64')
     R = np.zeros((n,n))
+
+    
     for i in range(n):
         R[i,i] = la.norm(Q[:,i])
+        #Normalize the ith column of Q
         Q[:,i] = Q[:,i] / R[i,i]
+
+        #Loops through 
         for j in range(i+1, n):
             R[i,j] = np.dot((Q[:,j].T), Q[:,i])
+            #Orthoganlize the ith column of Q
             Q[:,j] = Q[:,j] - (R[i,j] * Q[:,i])
 
     return Q, R
@@ -42,6 +49,7 @@ def abs_det(A):
     Returns:
         (float) the absolute value of the determinant of A.
     """
+    #Calculates the determinate using qr decomp
     return abs(np.prod(np.diag(qr_gram_schmidt(A)[1])))
 
 
@@ -82,6 +90,7 @@ def qr_householder(A):
         Q ((m,m) ndarray): An orthonormal matrix.
         R ((m,n) ndarray): An upper triangular matrix.
     """
+    #Initializes variables
     m,n = A.shape
     R = A.copy()
     Q = np.eye(m)
@@ -89,8 +98,11 @@ def qr_householder(A):
     for k in range(n - 1):
         u = np.copy(R[k:,k])
         u[0] = u[0] + np.sign(u[0]) * la.norm(u)
+        #Normalize u
         u = u / la.norm(u)
+        #Apply the reflection to R
         R[k:,k:] = R[k:,k:] - 2 * np.outer(u, (np.dot(np.transpose(u), R[k:,k:])))
+        #Apply the reflection to Q
         Q[k:,:] = Q[k:,:] - 2 * np.outer(u, (np.dot(np.transpose(u), Q[k:,:])))
 
     return np.transpose(Q), R
@@ -107,6 +119,7 @@ def hessenberg(A):
         H ((n,n) ndarray): The upper Hessenberg form of A.
         Q ((n,n) ndarray): An orthonormal matrix.
     """
+    #Initialize variavles
     m,n = A.shape
     H = A.copy()
     Q = np.eye(m)
@@ -114,16 +127,12 @@ def hessenberg(A):
         u = np.copy(H[k+1:,k])
         u[0] = u[0] + np.sign(u[0]) * la.norm(u)
         u = u / la.norm(u)
+        #Apply Qk to H
         H[k+1:,k:] = H[k+1:, k:] - 2 * np.outer(u, np.dot(np.transpose(u), H[k+1:,k:]))
+        #Apply Qk transpose to H
         H[:,k+1:] = H[:,k+1:] - 2 * np.outer(np.dot(H[:,k+1:], u), np.transpose(u))
+        #Apply Qk to Q
         Q[k+1:,:] = Q[k+1:,:] - 2 * np.outer(u, np.dot(np.transpose(u), Q[k+1:,:]))
 
     return H, np.transpose(Q)
 
-
-#Testing
-A = np.random.random((4,4))
-b = np.random.random(4)
-Q = hessenberg(A)[1]
-H = hessenberg(A)[0]
-print(np.allclose(Q @ H @ Q.T, A))
