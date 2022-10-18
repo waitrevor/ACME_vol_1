@@ -82,8 +82,18 @@ def qr_householder(A):
         Q ((m,m) ndarray): An orthonormal matrix.
         R ((m,n) ndarray): An upper triangular matrix.
     """
-    raise NotImplementedError("Problem 4 Incomplete")
+    m,n = A.shape
+    R = A.copy()
+    Q = np.eye(m)
 
+    for k in range(n - 1):
+        u = np.copy(R[k:,k])
+        u[0] = u[0] + np.sign(u[0]) * la.norm(u)
+        u = u / la.norm(u)
+        R[k:,k:] = R[k:,k:] - 2 * np.outer(u, (np.dot(np.transpose(u), R[k:,k:])))
+        Q[k:,:] = Q[k:,:] - 2 * np.outer(u, (np.dot(np.transpose(u), Q[k:,:])))
+
+    return np.transpose(Q), R
 
 # Problem 5
 def hessenberg(A):
@@ -97,12 +107,23 @@ def hessenberg(A):
         H ((n,n) ndarray): The upper Hessenberg form of A.
         Q ((n,n) ndarray): An orthonormal matrix.
     """
-    raise NotImplementedError("Problem 5 Incomplete")
+    m,n = A.shape
+    H = A.copy()
+    Q = np.eye(m)
+    for k in range(n - 3):
+        u = np.copy(H[k+1:,k])
+        u[0] = u[0] + np.sign(u[0]) * la.norm(u)
+        u = u / la.norm(u)
+        H[k+1:,k:] = H[k+1:, k:] - 2 * np.outer(u, np.dot(np.transpose(u), H[k+1:,k:]))
+        H[:,k+1:] = H[:,k+1:] - 2 * np.outer(np.dot(H[:,k+1:], u), np.transpose(u))
+        Q[k+1:,:] = Q[k+1:,:] - 2 * np.outer(u, np.dot(np.transpose(u), Q[k+1:,:]))
+
+    return H, np.transpose(Q)
 
 
 #Testing
 A = np.random.random((4,4))
 b = np.random.random(4)
-Q = qr_gram_schmidt(A)[0]
-R = qr_gram_schmidt(A)[1]
-print(A @ solve(A,b) == b)
+Q = hessenberg(A)[1]
+H = hessenberg(A)[0]
+print(np.allclose(Q @ H @ Q.T, A))
