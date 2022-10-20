@@ -136,11 +136,3 @@ def hessenberg(A):
         Q[k+1:,:] = Q[k+1:,:] - 2 * np.outer(u, np.dot(np.transpose(u), Q[k+1:,:]))
 
     return H, np.transpose(Q)
-
-#testing
-A = np.random.random((3,3))
-H, Q = hessenberg(A)
-print(np.allclose(np.triu(H, -1), H))
-print(np.allclose(Q @ H @ Q.T, A))
-print(A)
-print(Q @ H @ Q.T)
