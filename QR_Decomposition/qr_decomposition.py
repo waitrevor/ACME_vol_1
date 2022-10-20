@@ -95,7 +95,7 @@ def qr_householder(A):
     R = A.copy()
     Q = np.eye(m)
 
-    for k in range(n - 1):
+    for k in range(n):
         u = np.copy(R[k:,k])
         u[0] = u[0] + np.sign(u[0]) * la.norm(u)
         #Normalize u
@@ -119,13 +119,14 @@ def hessenberg(A):
         H ((n,n) ndarray): The upper Hessenberg form of A.
         Q ((n,n) ndarray): An orthonormal matrix.
     """
+    sign = lambda x: 1 if x >=0 else -1
     #Initialize variavles
     m,n = A.shape
     H = A.copy()
     Q = np.eye(m)
-    for k in range(n - 3):
+    for k in range(n - 2):
         u = np.copy(H[k+1:,k])
-        u[0] = u[0] + np.sign(u[0]) * la.norm(u)
+        u[0] = u[0] + sign(u[0]) * la.norm(u)
         u = u / la.norm(u)
         #Apply Qk to H
         H[k+1:,k:] = H[k+1:, k:] - 2 * np.outer(u, np.dot(np.transpose(u), H[k+1:,k:]))
@@ -136,3 +137,10 @@ def hessenberg(A):
 
     return H, np.transpose(Q)
 
+#testing
+A = np.random.random((3,3))
+H, Q = hessenberg(A)
+print(np.allclose(np.triu(H, -1), H))
+print(np.allclose(Q @ H @ Q.T, A))
+print(A)
+print(Q @ H @ Q.T)
