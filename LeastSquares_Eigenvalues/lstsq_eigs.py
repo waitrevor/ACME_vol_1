@@ -1,8 +1,8 @@
 # lstsq_eigs.py
 """Volume 1: Least Squares and Computing Eigenvalues.
-<Name>
-<Class>
-<Date>
+<Name> Trevor Wai
+<Class> Section 2
+<Date> 10/24/22
 """
 
 # (Optional) Import functions from your QR Decomposition lab.
@@ -12,6 +12,7 @@
 
 import numpy as np
 from matplotlib import pyplot as plt
+from scipy import linalg as la
 
 
 # Problem 1
@@ -26,7 +27,10 @@ def least_squares(A, b):
     Returns:
         x ((n, ) ndarray): The solution to the normal equations.
     """
-    raise NotImplementedError("Problem 1 Incomplete")
+    Q,R = la.qr(A, mode='economic')
+    prod = Q.T @ b
+    x_hat = la.solve_triangular(R, prod)
+    return x_hat
 
 # Problem 2
 def line_fit():
@@ -34,7 +38,7 @@ def line_fit():
     index for the data in housing.npy. Plot both the data points and the least
     squares line.
     """
-    raise NotImplementedError("Problem 2 Incomplete")
+    
 
 
 # Problem 3
@@ -97,4 +101,27 @@ def qr_algorithm(A, N=50, tol=1e-12):
     Returns:
         ((n,) ndarray): The eigenvalues of A.
     """
-    raise NotImplementedError("Problem 6 Incomplete")
+    m,n = A.shape
+    S = la.hessenberg(A)
+    for k in range(N):
+        Q,R = S
+        S = R @ Q
+    eigs = []
+    i = 0
+    while i < n:
+        if S[1].shape == (1,1):
+            eigs.append(S[i])
+        elif S[i].shape == (2,2):
+            eigen_val = la.eig(S[i])
+            eigs.append(eigen_val)
+            i += 1
+        i += 1
+    return eigs
+
+
+
+
+#Testing
+A = np.random.random((5,5))
+b = np.random.random(5)
+print(least_squares(A, b))
