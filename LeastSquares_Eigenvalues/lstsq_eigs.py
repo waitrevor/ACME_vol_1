@@ -10,6 +10,7 @@
 # sys.path.insert(1, "../QR_Decomposition")
 # from qr_decomposition import qr_gram_schmidt, qr_householder, hessenberg
 
+import cmath
 import numpy as np
 from matplotlib import pyplot as plt
 from scipy import linalg as la
@@ -27,7 +28,9 @@ def least_squares(A, b):
     Returns:
         x ((n, ) ndarray): The solution to the normal equations.
     """
+    #Finds the QR decomposition of A
     Q,R = la.qr(A, mode='economic')
+    #Using the upper traingular matrix R solves for x_hat
     prod = Q.T @ b
     x_hat = la.solve_triangular(R, prod)
     return x_hat
@@ -38,6 +41,30 @@ def line_fit():
     index for the data in housing.npy. Plot both the data points and the least
     squares line.
     """
+    #Loads the data from the housing.npy file
+    infile = np.load('housing.npy')
+    m,n = infile.shape
+
+    #Initializes the years from the infile and prices from the infile
+    year = infile[:,0]
+    price = infile[:,1]
+    
+    #Creates a Matrix using the years and vector using the prices
+    A = np.column_stack((year, np.ones(m)))
+    b = price
+
+    #Returns the least square of A and b
+    x = least_squares(A,b)
+
+    #Plots the data
+    plt.plot(np.linspace(0,16), np.polyval(x, np.linspace(0,16)), label='Least Square Fit')
+    plt.plot(year, price, 'o', label='Data Point')
+    plt.legend()
+    plt.xlabel("year")
+    plt.ylabel("Price Index")
+    plt.title("Best Fit Line")
+    plt.show()
+
     
 
 
@@ -47,7 +74,30 @@ def polynomial_fit():
     the year to the housing price index for the data in housing.npy. Plot both
     the data points and the least squares polynomials in individual subplots.
     """
-    raise NotImplementedError("Problem 3 Incomplete")
+    #Loads the data and initializes variables
+    infile = np.load('housing.npy')
+    plot = 1
+    year = infile[:,0]
+    price = infile[:,1]
+        
+    #Loops through the degrees of polynimials
+    for i in [4,7,10,13]:
+        #Creates matrix A and vector b
+        A = np.vander(year, i)
+        b = price
+        #Returns the least square of A and b
+        x = least_squares(A,b)
+        #Plots the data
+        plt.subplot(2,2,plot)
+        plt.plot(np.linspace(0,16), np.polyval(x, np.linspace(0,16)), label='polynomial best fit')
+        plt.plot(year, price, 'o', label='Data Point')
+        plot +=1 
+        plt.legend()
+        plt.xlabel("year")
+        plt.ylabel("Price Index")
+        plt.title(f"{i-1} degree polynomial best fit")
+    plt.tight_layout()
+    plt.show()
 
 
 def plot_ellipse(a, b, c, d, e):
@@ -67,7 +117,17 @@ def ellipse_fit():
     ellipse.npy. Plot the original data points and the ellipse together, using
     plot_ellipse() to plot the ellipse.
     """
-    raise NotImplementedError("Problem 4 Incomplete")
+    x, y = np.load('ellipse.npy').T
+    A = np.column_stack((x**2, x, x*y, y, y**2))
+    m,n = A.shape
+    a, b, c, d, e= la.lstsq(A, np.ones(m))[0]
+    plot_ellipse(a,b,c,d,e)
+    plt.plot(x, y, 'o', label='data points')
+    plt.legend()
+    plt.xlabel("x axis")
+    plt.ylabel('y label')
+    plt.title('Title')
+    plt.show()
 
 
 # Problem 5
@@ -85,7 +145,17 @@ def power_method(A, N=20, tol=1e-12):
         ((n,) ndarray): An eigenvector corresponding to the dominant
             eigenvalue of A.
     """
-    raise NotImplementedError("Problem 5 Incomplete")
+    m,n = A.shape
+    x = np.random.random(n)
+    x = x / la.norm(x)
+    for k in range(N):
+        copy_of_x = np.copy(x)
+        x = A * x
+        x = x / la.norm(x)
+        if la.norm(x - copy_of_x) < tol:
+            break
+
+    return x.T @ A @ x, x
 
 
 # Problem 6
@@ -104,24 +174,25 @@ def qr_algorithm(A, N=50, tol=1e-12):
     m,n = A.shape
     S = la.hessenberg(A)
     for k in range(N):
-        Q,R = S
+        Q,R = la.qr(S)
         S = R @ Q
     eigs = []
     i = 0
+    
     while i < n:
-        if S[1].shape == (1,1):
-            eigs.append(S[i])
-        elif S[i].shape == (2,2):
-            eigen_val = la.eig(S[i])
-            eigs.append(eigen_val)
+        if i == n-1:
+            eigs.append(S[i][i])
+            break
+        if abs(S[i+1,i]) < tol:
+            eigs.append(S[i,i])
+        else:
+            B = - S[i][i] - S[i+1][i+1]
+            C = (S[i][i]*S[i+1][i+1] - S[i][i+1]*S[i+1][i])
+            thing_plus = (-B + cmath.sqrt(B**2 - (4*C))) / 2
+            thing_minus = (-B - cmath.sqrt(B**2 - (4*C))) / 2
+            eigs.append(thing_plus)
+            eigs.append(thing_minus)
             i += 1
         i += 1
+
     return eigs
-
-
-
-
-#Testing
-A = np.random.random((5,5))
-b = np.random.random(5)
-print(least_squares(A, b))
