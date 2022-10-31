@@ -117,10 +117,13 @@ def ellipse_fit():
     ellipse.npy. Plot the original data points and the ellipse together, using
     plot_ellipse() to plot the ellipse.
     """
+    #Loads the data from ellipse.npy and puts it into a matrix
     x, y = np.load('ellipse.npy').T
     A = np.column_stack((x**2, x, x*y, y, y**2))
     m,n = A.shape
+    #Gives the coeffiecents of the equation for an ellipse
     a, b, c, d, e= la.lstsq(A, np.ones(m))[0]
+    #Plots the Ellipse
     plot_ellipse(a,b,c,d,e)
     plt.plot(x, y, 'o', label='data points')
     plt.legend()
@@ -145,17 +148,22 @@ def power_method(A, N=20, tol=1e-12):
         ((n,) ndarray): An eigenvector corresponding to the dominant
             eigenvalue of A.
     """
+    #Gets the shape of the square nxn matrix A
     m,n = A.shape
+    #Gets a random vector of length n
     x = np.random.random(n)
+    #Normalize x
     x = x / la.norm(x)
+    #Computes the dominant eigenvalue of A and a corresponding eigenvector via the power method
     for k in range(N):
         copy_of_x = np.copy(x)
-        x = A * x
+        x = A @ x
         x = x / la.norm(x)
+        #Checks to make sure that the norm is still within the tolerance
         if la.norm(x - copy_of_x) < tol:
             break
 
-    return x.T @ A @ x, x
+    return np.dot(x, A @ x), x
 
 
 # Problem 6
@@ -171,20 +179,28 @@ def qr_algorithm(A, N=50, tol=1e-12):
     Returns:
         ((n,) ndarray): The eigenvalues of A.
     """
+    #Finds the shape of the matrix A
     m,n = A.shape
+    #Puts A into upper Hessenberg Form
     S = la.hessenberg(A)
     for k in range(N):
+        #Gets the QR decomposition of A
         Q,R = la.qr(S)
+        #Recombine R and Q into S
         S = R @ Q
+        #Initialize an empty list of eigenvalues
     eigs = []
     i = 0
     
     while i < n:
+        #Base Case
         if i == n-1:
             eigs.append(S[i][i])
             break
+        #Ensures still within the tolerance
         if abs(S[i+1,i]) < tol:
             eigs.append(S[i,i])
+        #Calculates the eigen values andappends them to eigs
         else:
             B = - S[i][i] - S[i+1][i+1]
             C = (S[i][i]*S[i+1][i+1] - S[i][i+1]*S[i+1][i])
@@ -193,6 +209,7 @@ def qr_algorithm(A, N=50, tol=1e-12):
             eigs.append(thing_plus)
             eigs.append(thing_minus)
             i += 1
+        #Move on to the next S
         i += 1
 
     return eigs
