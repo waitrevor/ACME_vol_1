@@ -1,11 +1,12 @@
 # image_segmentation.py
 """Volume 1: Image Segmentation.
-<Name>
-<Class>
-<Date>
+<Name> Trevor Wai
+<Class> Section 2
+<Date> 11/1/2022
 """
 
 import numpy as np
+import scipy
 
 
 # Problem 1
@@ -18,7 +19,13 @@ def laplacian(A):
     Returns:
         L ((N,N) ndarray): The Laplacian matrix of G.
     """
-    raise NotImplementedError("Problem 1 Incomplete")
+    m,n = A.shape
+    for i in n:
+        w = 
+        D = np.diag(w)
+    L = D - A
+
+    return scipy.sparse.csgraph.laplacian(A)
 
 
 # Problem 2
@@ -35,7 +42,13 @@ def connectivity(A, tol=1e-8):
         (int): The number of connected components in G.
         (float): the algebraic connectivity of G.
     """
-    raise NotImplementedError("Problem 2 Incomplete")
+    N = A.shape[0]
+    eigs = []
+    for i in N:
+        eigenvalue = scipy.linalg.eig(A)
+        if eigenvalue > tol:
+            eigs.append[eigenvalue]
+    return eigs
 
 
 # Helper function for problem 4.
