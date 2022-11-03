@@ -1,0 +1,6 @@
+11/03/22 17:17
+
+SyntaxError while loading 'image_segmentation.py': invalid syntax (image_segmentation.py, line 24)
+
+-------------------------------------------------------------------------------
+
