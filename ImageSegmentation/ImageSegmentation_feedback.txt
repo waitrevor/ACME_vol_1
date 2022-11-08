@@ -4,3 +4,42 @@ SyntaxError while loading 'image_segmentation.py': invalid syntax (image_segment
 
 -------------------------------------------------------------------------------
 
+11/08/22 09:51
+
+ModuleNotFoundError while loading 'image_segmentation.py': No module named 'imageio.v2'
+
+-------------------------------------------------------------------------------
+
+11/08/22 10:27
+
+Problem 1 (5 points):
+Score += 5
+
+Problem 2 (10 points):
+Score += 10
+
+Problem 3 (5 points):
+Score += 5
+
+Problem 4 (10 points):
+Score += 10
+
+Problem 5 (10 points):
+Score += 10
+
+Problem 6 (5 points):
+Score += 5
+
+Code Quality (5 points):
+Score += 5
+
+Total score: 50/50 = 100.0%
+
+Excellent!
+
+
+Comments:
+	Great job!
+
+-------------------------------------------------------------------------------
+
