@@ -6,7 +6,12 @@
 """
 
 import numpy as np
-import scipy
+import scipy.linalg as la
+from imageio.v2 import imread
+from scipy import sparse
+import matplotlib.pyplot as plt
+from scipy.sparse.csgraph import laplacian as lap
+import scipy.sparse.linalg as spla
 
 
 # Problem 1
@@ -19,13 +24,8 @@ def laplacian(A):
     Returns:
         L ((N,N) ndarray): The Laplacian matrix of G.
     """
-    m,n = A.shape
-    for i in n:
-        w = 
-        D = np.diag(w)
-    L = D - A
-
-    return scipy.sparse.csgraph.laplacian(A)
+    #Computes the Laplacian Matrix
+    return np.diag(np.sum(A, axis=0)) - A
 
 
 # Problem 2
@@ -42,13 +42,19 @@ def connectivity(A, tol=1e-8):
         (int): The number of connected components in G.
         (float): the algebraic connectivity of G.
     """
-    N = A.shape[0]
-    eigs = []
-    for i in N:
-        eigenvalue = scipy.linalg.eig(A)
-        if eigenvalue > tol:
-            eigs.append[eigenvalue]
-    return eigs
+    #Initialize Variables
+    L = laplacian(A)
+    eigs = sorted(np.real(la.eigvals(L)))
+    zeros = 0
+
+    #Loops through all the eigen values and sets eigen values less than tolerance to zero
+    for i in eigs:
+        if i < tol:
+            zeros+=1
+        else:
+            break
+    
+    return zeros, eigs[1]
 
 
 # Helper function for problem 4.
@@ -91,27 +97,109 @@ class ImageSegmenter:
     # Problem 3
     def __init__(self, filename):
         """Read the image file. Store its brightness values as a flat array."""
-        raise NotImplementedError("Problem 3 Incomplete")
+        #Scales the image to be between 0 and 1
+        self.image = imread(filename) / 255
+
+        #Checks to see if the image is color or gray scaled
+        self.colored = bool(len(self.image.shape) == 3)
+
+        #Flattens brightness
+        if self.colored:
+            self.brightness = np.ravel(self.image.mean(axis=2))
+        else:
+            self.brightness = np.ravel(self.image)
+
 
     # Problem 3
     def show_original(self):
         """Display the original image."""
-        raise NotImplementedError("Problem 3 Incomplete")
+        #Checks if the image is color or grayscaled
+        if not self.colored:
+            plt.imshow(self.image, cmap="gray")
+            
+        else:
+            plt.imshow(self.image)
+
+        #Shows image
+        plt.axis('off')
+        plt.show()
 
     # Problem 4
     def adjacency(self, r=5., sigma_B2=.02, sigma_X2=3.):
         """Compute the Adjacency and Degree matrices for the image graph."""
-        raise NotImplementedError("Problem 4 Incomplete")
+        #Initialize Variables
+        m,n = self.image.shape[:2]
+        A = sparse.lil_matrix((m*n,m*n))
+        D = np.zeros(m*n)
+
+        #Loops through the size of A and D
+        for i in range(m*n):
+            #Uses get_neighbors to find the weight and updates them to A and D
+            J, dist = get_neighbors(i, r, m, n)
+            w = np.exp(-abs(self.brightness[i] - self.brightness[J]) / sigma_B2 - dist / sigma_X2)
+            A[i, J] = w
+            D[i] = sum(w)
+
+        return A.tocsc(), D
+        
 
     # Problem 5
     def cut(self, A, D):
         """Compute the boolean mask that segments the image."""
-        raise NotImplementedError("Problem 5 Incomplete")
+        #Initialize Variables making matrix L and D
+        m,n = self.image.shape[:2]
+        L = lap(A)
+        new_D = sparse.diags(D ** -(1/2))
+        #Computes the second smalles eigen value and turns it into a matrix
+        prod = new_D@L@new_D
+        small_eig = spla.eigsh(prod, which='SM', k=2)[1][:,1].reshape((m,n))
+        #Creates a greater than zero mask of the smallest eigen matrix
+        mask = small_eig > 0
+
+        return mask
+
 
     # Problem 6
     def segment(self, r=5., sigma_B=.02, sigma_X=3.):
         """Display the original image and its segments."""
-        raise NotImplementedError("Problem 6 Incomplete")
+        #Gets matrices from adjacency and cut
+        A, D = self.adjacency()
+        mask = self.cut(A, D)
+
+        #Checks to see if the image is colored
+        if self.colored:
+            mask = np.dstack([mask, mask, mask])
+
+        #Updates the positive and negative images
+        pos = self.image * mask
+        neg = self.image * ~mask
+
+        #Plots original image
+        plt.subplot(131)
+        if not self.colored:
+            plt.imshow(self.image, cmap="gray")
+        else:
+            plt.imshow(self.image)
+        plt.axis('off')
+
+        #PLots the negative image
+        plt.subplot(132)
+        if not self.colored:
+            plt.imshow(neg, cmap='gray')
+        else:
+            plt.imshow(neg)
+        plt.axis('off')
+
+        #PLots the positive image
+        plt.subplot(133)
+        if not self.colored:
+            plt.imshow(pos, cmap='gray')
+        else:
+            plt.imshow(pos)
+        plt.axis('off')
+
+        plt.show()
+
 
 
 # if __name__ == '__main__':
