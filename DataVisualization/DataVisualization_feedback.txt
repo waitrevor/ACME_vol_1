@@ -4,3 +4,39 @@ data_visualization.ipynb has not been modified yet
 
 -------------------------------------------------------------------------------
 
+12/08/22 12:30
+
+Problem 1 (5 points):
+Did not include observations comparing the distributions
+Score += 4
+
+Problem 2 (5 points):
+Score += 5
+
+Problem 3 (5 points):
+No axis labels, graphs are unclear, no regression line plotted
+Score += 3
+
+Problem 4 (10 points):
+Score += 10
+
+Problem 5 (10 points):
+Score += 10
+
+Problem 6 (10 points):
+Did not include a list of major insights gained
+Score += 8
+
+Code Quality (5 points):
+Score += 5
+
+Total score: 45/50 = 90.0%
+
+Great job!
+
+
+Comments:
+	Great work; let me know if you have any questions on the regrade.  COngrats on the end of your first acme semester
+
+-------------------------------------------------------------------------------
+
