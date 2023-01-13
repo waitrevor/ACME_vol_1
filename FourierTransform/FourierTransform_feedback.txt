@@ -1,0 +1,35 @@
+01/13/23 11:17
+
+Problem 1 (5 points):
+Score += 5
+
+Problem 2 (10 points):
+Make sure to compare and display the audio for the built in scipy method
+Score += 8
+
+Problem 3  (5 points):
+Score += 5
+
+Problem 4 (10 points):
+It sounds like the sound is echoing still in Noisy1 and noisy2 instead of being all the way cleaned. It might be a git thing on my end since I know we talked about it
+Score += 6
+
+Problem 5 (5 points):
+Score += 5
+
+Problem 6  (10 points):
+Need to do something to clean the image.
+Score += 0
+
+Code Quality (5 points):
+Add comments in your new methods in the class.
+Score += 2
+
+Total score: 31/50 = 62.0%
+
+
+Comments:
+	I will make sure my git is working correctly because I know we talked about these things yesterday. Let me know if you have questions or see an issue on your end
+
+-------------------------------------------------------------------------------
+
