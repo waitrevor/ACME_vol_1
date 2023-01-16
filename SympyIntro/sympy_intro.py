@@ -1,10 +1,13 @@
 # sympy_intro.py
 """Python Essentials: Introduction to SymPy.
-<Name>
-<Class>
-<Date>
+<Name> Trevor Wai
+<Class> Section 2
+<Date> 1/16/23
 """
 
+import sympy as sy
+from matplotlib import pyplot as plt
+import numpy as np
 
 # Problem 1
 def prob1():
@@ -14,7 +17,8 @@ def prob1():
 
     Make sure that the fractions remain symbolic.
     """
-    raise NotImplementedError("Problem 1 Incomplete")
+    x, y = sy.symbols('x, y')
+    return sy.Rational(2/5)*sy.E**(x**2 - y)*sy.cosh(x+y) + sy.Rational(3/7)*sy.log(x*y + 1)
 
 
 # Problem 2
@@ -23,7 +27,8 @@ def prob2():
 
         product_(i=1 to 5)[ sum_(j=i to 5)[j(sin(x) + cos(x))] ]
     """
-    raise NotImplementedError("Problem 2 Incomplete")
+    x, j, i = sy.symbols('x, j, i')
+    return sy.simplify(sy.product(sy.summation(j * (sy.sin(x) + sy.cos(x)),(j, i, 5)), (i, 1, 5)))
 
 
 # Problem 3
@@ -33,7 +38,15 @@ def prob3(N):
     Lambdify the resulting expression and plot the series on the domain
     y in [-2,2]. Plot e^(-y^2) over the same domain for comparison.
     """
-    raise NotImplementedError("Problem 3 Incomplete")
+    y, n = sy.symbols('y,n')
+    domain = np.linspace(-2,2, 1000)
+    f = sy.lambdify(y, sy.summation((-y**2)**n / sy.factorial(n), (n, 0, N)), 'numpy')
+    plt.plot(domain, f(domain), label='Summation')
+    plt.plot(domain, sy.E**(-domain**2), label='e^(-y^2)')
+    plt.legend()
+    plt.tight_layout()
+    plt.show()
+
 
 
 # Problem 4
@@ -46,7 +59,11 @@ def prob4():
     it to polar coordinates. Simplify the result, then solve it for r.
     Lambdify a solution and use it to plot x against y for theta in [0, 2pi].
     """
-    raise NotImplementedError("Problem 4 Incomplete")
+    r, theta = sy.symbols('r, theta')
+    x = r * sy.cos(theta)
+    y = r * sy.sin(theta)
+    domain = np.linspace(0, 2*np.pi, 1000)
+    1 - sy.Rational(((x**2 + y**2)**sy.Rational(7/2) + 18 * x**5 * y - 60 * x**3 * y**3 + 18 * x * y**5) / (x**2 + y**2)**3)
 
 
 # Problem 5
