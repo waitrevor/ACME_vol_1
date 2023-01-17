@@ -131,6 +131,7 @@ def prob6():
     plt.plot(domain, f(domain), label='p(x)')
     plt.legend()
     plt.show()
+    return set(min_p), set(max_p)
     
 
 
