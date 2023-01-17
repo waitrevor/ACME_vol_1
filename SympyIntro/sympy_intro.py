@@ -145,4 +145,19 @@ def prob7():
     Returns:
         (float): the integral of f over the sphere of radius 2.
     """
-    
+    x, y, z, rho, theta, psi, r = sy.symbols('x, y, z, rho, theta, psi, r')
+    domain = np.linspace(0, 3, 1000)
+    h_1 = rho * sy.sin(psi) * sy.cos(theta)
+    h_2 = rho * sy.sin(psi) * sy.sin(theta)
+    h_3 = rho * sy.cos(psi)
+
+    f = sy.lambdify((x, y, z), (x**2 + y**2 + z**2)**2, 'numpy')
+
+    h = sy.Matrix([h_1, h_2, h_3])
+    J = h.jacobian([rho, theta, psi])
+    vol = sy.integrate(sy.simplify(f(h_1, h_2, h_3) * -J.det()), (rho, 0, r), (theta, 0, 2*sy.pi), (psi, 0, sy.pi))
+    v = sy.lambdify(r, vol, 'numpy')
+    plt.plot(domain, v(domain))
+    plt.show()
+    return v(2)
+
