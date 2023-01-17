@@ -18,7 +18,7 @@ def prob1():
     Make sure that the fractions remain symbolic.
     """
     x, y = sy.symbols('x, y')
-    return sy.Rational(2/5)*sy.E**(x**2 - y)*sy.cosh(x+y) + sy.Rational(3/7)*sy.log(x*y + 1)
+    return sy.Rational(2,5)*sy.E**(x**2 - y)*sy.cosh(x+y) + sy.Rational(3,7)*sy.log(x*y + 1)
 
 
 # Problem 2
@@ -59,11 +59,17 @@ def prob4():
     it to polar coordinates. Simplify the result, then solve it for r.
     Lambdify a solution and use it to plot x against y for theta in [0, 2pi].
     """
-    r, theta = sy.symbols('r, theta')
-    x = r * sy.cos(theta)
-    y = r * sy.sin(theta)
+    x, y, r, theta = sy.symbols('x,y, r, theta')
     domain = np.linspace(0, 2*np.pi, 1000)
-    1 - sy.Rational(((x**2 + y**2)**sy.Rational(7/2) + 18 * x**5 * y - 60 * x**3 * y**3 + 18 * x * y**5) / (x**2 + y**2)**3)
+    expr = 1 - ((x**2 + y**2)**sy.Rational(7,2) + 18 * x**5 * y - 60 * x**3 * y**3 + 18 * x * y**5) / (x**2 + y**2)**3
+    trig = sy.simplify(expr.subs({x: r * sy.cos(theta), y:r*sy.sin(theta)}))
+    sol = sy.solve(trig, r)[0]
+    f = sy.lambdify(theta, sol, 'numpy')
+    plt.plot(f(domain) * np.cos(domain), f(domain) * np.sin(domain))
+    plt.tight_layout()
+    plt.show()
+
+
 
 
 # Problem 5
@@ -78,7 +84,15 @@ def prob5():
         (dict): a dictionary mapping eigenvalues (as expressions) to the
             corresponding eigenvectors (as SymPy matrices).
     """
-    raise NotImplementedError("Problem 5 Incomplete")
+    x, y, l = sy.symbols('x, y, l')
+    A = sy.Matrix([[x-y, x, 0], [x, x-y, x], [0, x, x-y]])
+    I = sy.Matrix([[1,0,0], [0,1,0], [0,0,1]])
+    eigs = sy.det(A - l*I)
+    vals = sy.solve(eigs, l)
+    dict = {}
+    for eigen in vals:
+        dict[eigen] = (A - eigen*I).nullspace()
+    return dict
 
 
 # Problem 6
@@ -96,7 +110,30 @@ def prob6():
         (set): the local minima.
         (set): the local maxima.
     """
-    raise NotImplementedError("Problem 6 Incomplete")
+    domain = np.linspace(-5, 5, 1000)
+    x = sy.symbols('x')
+    p = 2*x**6 - 51*x**4 + 48*x**3 + 312*x**2 - 576*x - 100
+    p_prime = sy.diff(p, x)
+    p_prime_prime = sy.diff(p_prime, x)
+    crits = np.array(sy.solve(p_prime, x))
+    f = sy.lambdify(x, p, 'numpy')
+    f_prime_prime = sy.lambdify(x, p_prime_prime, 'numpy')
+    max_p = np.array([])
+    min_p = np.array([])
+
+    for point in crits:
+        if f_prime_prime(point) < 0:
+            max_p = np.append(max_p, point)
+        else:
+            min_p = np.append(min_p, point)
+    plt.scatter(max_p, f(max_p), label='max')
+    plt.scatter(min_p, f(min_p), label='min')
+    plt.plot(domain, f(domain), label='p(x)')
+    plt.legend()
+    plt.show()
+    
+
+
 
 
 # Problem 7
@@ -108,4 +145,4 @@ def prob7():
     Returns:
         (float): the integral of f over the sphere of radius 2.
     """
-    raise NotImplementedError("Problem 7 Incomplete")
+    
