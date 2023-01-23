@@ -179,6 +179,7 @@ def prob7():
     v = sy.lambdify(r, vol, 'numpy')
     #Plots the volume as the radius grows larger
     plt.plot(domain, v(domain))
+    plt.title('Volume as radius increases')
     plt.show()
     return v(2)
 
