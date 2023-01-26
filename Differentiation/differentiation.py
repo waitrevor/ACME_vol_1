@@ -134,13 +134,12 @@ def jacobian_cdq2(f, x, h=1e-5):
     Returns:
         ((m,n) ndarray) the Jacobian matrix of f at x.
     """
-    n = len(x)
-    I = np.eye(n)
-    J = np.array([])
-    for i in range(n):
-        df = cdq2(f, x[i], h * I[i])
-        J = np.append(J, df)
-    
+    # n = len(x)
+    # I = np.eye(n)
+    # J = np.array([])
+    # for i in range(n):
+    #     df = cdq2(f, x[i], h * I[i])
+    #     J = np.append(J, df)
 
 
 # Problem 6
