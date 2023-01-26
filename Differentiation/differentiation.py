@@ -1,41 +1,49 @@
 # differentiation.py
 """Volume 1: Differentiation.
-<Name>
-<Class>
-<Date>
+<Name> Trevor Wai
+<Class> Section 1
+<Date> 1/23/23
 """
 
+import sympy as sy
+from matplotlib import pyplot as plt
+import numpy as np
+# from jax import numpy as jnp
+# from jax import grad
 
 # Problem 1
 def prob1():
     """Return the derivative of (sin(x) + 1)^sin(cos(x)) using SymPy."""
-    raise NotImplementedError("Problem 1 Incomplete")
+    x = sy.symbols('x')
+    f_prime = sy.diff((sy.sin(x) + 1)**(sy.sin(sy.cos(x))), x)
+    f_prime = sy.lambdify(x, f_prime, 'numpy')
+    return f_prime
 
 
 # Problem 2
 def fdq1(f, x, h=1e-5):
     """Calculate the first order forward difference quotient of f at x."""
-    raise NotImplementedError("Problem 2 Incomplete")
+    return (f(x + h) - f(x)) / h
 
 def fdq2(f, x, h=1e-5):
     """Calculate the second order forward difference quotient of f at x."""
-    raise NotImplementedError("Problem 2 Incomplete")
+    return (-3*f(x) + 4*f(x+h) - f(x+2*h)) / (2*h)
 
 def bdq1(f, x, h=1e-5):
     """Calculate the first order backward difference quotient of f at x."""
-    raise NotImplementedError("Problem 2 Incomplete")
+    return (f(x) - f(x-h)) / h
 
 def bdq2(f, x, h=1e-5):
     """Calculate the second order backward difference quotient of f at x."""
-    raise NotImplementedError("Problem 2 Incomplete")
+    return (3*f(x) - 4*f(x-h) + f(x-2*h)) / (2*h)
 
 def cdq2(f, x, h=1e-5):
     """Calculate the second order centered difference quotient of f at x."""
-    raise NotImplementedError("Problem 2 Incomplete")
+    return (f(x+h) - f(x-h)) / (2*h)
 
 def cdq4(f, x, h=1e-5):
     """Calculate the fourth order centered difference quotient of f at x."""
-    raise NotImplementedError("Problem 2 Incomplete")
+    return (f(x-2*h) - 8*f(x-h) + 8*f(x+h) - f(x+2*h)) / (12*h)
 
 
 # Problem 3
@@ -49,7 +57,19 @@ def prob3(x0):
     Parameters:
         x0 (float): The point where the derivative is being approximated.
     """
-    raise NotImplementedError("Problem 3 Incomplete")
+    x = sy.symbols('x')
+    f = sy.lambdify(x, (sy.sin(x) + 1)**(sy.sin(sy.cos(x))), 'numpy')
+    h = np.logspace(-8,0,9)
+    plt.loglog(h, abs(prob1()(x0) - fdq1(f, x0, h)), label='Order 1 Forward')
+    plt.loglog(h, abs(prob1()(x0) - fdq2(f, x0, h)), label='Order 2 Forward')
+    plt.loglog(h, abs(prob1()(x0) - bdq1(f, x0, h)), label='Order 1 Backward')
+    plt.loglog(h, abs(prob1()(x0) - bdq2(f, x0, h)), label='Order 2 Backward')
+    plt.loglog(h, abs(prob1()(x0) - cdq2(f, x0, h)), label='Order 2 Centered')
+    plt.loglog(h, abs(prob1()(x0) - cdq4(f, x0, h)), label='Order 4 Centered')
+    plt.ylabel('Absolte Error')
+    plt.legend()
+    plt.tight_layout()
+    plt.show()
 
 
 # Problem 4
@@ -76,7 +96,26 @@ def prob4():
     difference quotient for t=8,9,...,13. Return the values of the speed at
     each t.
     """
-    raise NotImplementedError("Problem 4 Incomplete")
+    data = np.deg2rad(np.load('plane.npy'))
+    
+    x = lambda t: 500 * np.tan(data[t][2]) / (np.tan(data[t][2]) - np.tan(data[t][1]))
+    y = lambda t: (500 * np.tan(data[t][2]) * np.tan(data[t][1])) / (np.tan(data[t][2]) - np.tan(data[t][1]))
+
+    x_7 = fdq1(x, 0, 1)
+    y_7 = fdq1(y, 0, 1)
+    t_7 = np.sqrt(x_7**2 + y_7**2)
+
+    x_14 = bdq1(x, 7, 1)
+    y_14 = bdq1(y, 7, 1)
+    t_14 = np.sqrt(x_14**2 + y_14**2)
+
+    t_i = []
+    for i in range(1,7):
+          x_i = cdq2(x, i, 1)
+          y_i = cdq2(y, i, 1)
+          t_i.append(np.sqrt(x_i**2 + y_i**2))
+
+    return t_7, t_i[0], t_i[1], t_i[2], t_i[3], t_i[4], t_i[5], t_14
 
 
 # Problem 5
@@ -95,7 +134,13 @@ def jacobian_cdq2(f, x, h=1e-5):
     Returns:
         ((m,n) ndarray) the Jacobian matrix of f at x.
     """
-    raise NotImplementedError("Problem 5 Incomplete")
+    n = len(x)
+    I = np.eye(n)
+    J = np.array([])
+    for i in range(n):
+        df = cdq2(f, x[i], h * I[i])
+        J = np.append(J, df)
+    
 
 
 # Problem 6
@@ -106,14 +151,14 @@ def cheb_poly(x, n):
         x (jax.ndarray): the points to evaluate T_n(x) at.
         n (int): The degree of the polynomial.
     """
-    raise NotImplementedError("Problem 6 Incomplete")
+    
 
 def prob6():
     """Use JAX and cheb_poly() to create a function for the derivative
     of the Chebyshev polynomials, and use that function to plot the derivatives
     over the domain [-1,1] for n=0,1,2,3,4.
     """
-    raise NotImplementedError("Problem 6 Incomplete")
+    
 
 
 # Problem 7
@@ -136,4 +181,4 @@ def prob7(N=200):
     with different colors for SymPy, the difference quotient, and JAX.
     For SymPy, assume an absolute error of 1e-18.
     """
-    raise NotImplementedError("Problem 7 Incomplete")
+    
