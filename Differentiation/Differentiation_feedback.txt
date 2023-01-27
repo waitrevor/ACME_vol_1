@@ -1,0 +1,37 @@
+01/26/23 21:39
+
+Problem 1 (5 points):
+Score += 5
+
+Problem 2 (5 points):
+Score += 5
+
+Problem 3 (10 points):
+Please label your x axis
+Score += 9
+
+Problem 4 (10 points):
+Score += 10
+
+Problem 5 (5 points):
+TypeError: Invalid return type 'NoneType'
+
+Problem 6 (5 points):
+TypeError: Invalid return type 'NoneType'
+
+Problem 7 (5 points):
+I didn't see a plot of times and accuracy to grade
+Score += 0
+
+Code Quality (5 points):
+Add comments to your code
+Score += 2
+
+Total score: 31/50 = 62.0%
+
+
+Comments:
+	Let me know if you have any questions!
+
+-------------------------------------------------------------------------------
+
