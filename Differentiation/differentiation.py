@@ -8,8 +8,9 @@
 import sympy as sy
 from matplotlib import pyplot as plt
 import numpy as np
-# from jax import numpy as jnp
-# from jax import grad
+from jax import numpy as jnp
+from jax import grad
+import time as time
 
 # Problem 1
 def prob1():
@@ -67,6 +68,7 @@ def prob3(x0):
     plt.loglog(h, abs(prob1()(x0) - cdq2(f, x0, h)), label='Order 2 Centered')
     plt.loglog(h, abs(prob1()(x0) - cdq4(f, x0, h)), label='Order 4 Centered')
     plt.ylabel('Absolte Error')
+    plt.xlabel('h')
     plt.legend()
     plt.tight_layout()
     plt.show()
@@ -134,12 +136,12 @@ def jacobian_cdq2(f, x, h=1e-5):
     Returns:
         ((m,n) ndarray) the Jacobian matrix of f at x.
     """
-    # n = len(x)
-    # I = np.eye(n)
-    # J = np.array([])
-    # for i in range(n):
-    #     df = cdq2(f, x[i], h * I[i])
-    #     J = np.append(J, df)
+    n = len(x)
+    I = np.eye(n)
+    J = np.array([])
+    df = [(f(x + h * I[:,i]) - f(x - h * I[:,i])) / (2 * h) for i in range(n)]
+    J = np.column_stack(df)
+    return J
 
 
 # Problem 6
@@ -150,14 +152,29 @@ def cheb_poly(x, n):
         x (jax.ndarray): the points to evaluate T_n(x) at.
         n (int): The degree of the polynomial.
     """
-    
+    if n == 1:
+        return x
+    elif n == 0:
+        return jnp.ones_like(x)
+    return 2 * x * cheb_poly(x, n-1) - cheb_poly(x, n-2)
 
 def prob6():
     """Use JAX and cheb_poly() to create a function for the derivative
     of the Chebyshev polynomials, and use that function to plot the derivatives
     over the domain [-1,1] for n=0,1,2,3,4.
     """
-    
+    domain = jnp.linspace(-1,1, 1000)
+    for n in range(0,5):
+        poly = lambda x: cheb_poly(x, n)
+        df = jnp.vectorize(grad(poly))
+
+        plt.plot(domain, df(domain), label=f'n = {n}')
+
+
+    plt.title(f'Derivative of Cheby Poly')
+    plt.legend()
+    plt.tight_layout()
+    plt.show()
 
 
 # Problem 7
@@ -180,4 +197,46 @@ def prob7(N=200):
     with different colors for SymPy, the difference quotient, and JAX.
     For SymPy, assume an absolute error of 1e-18.
     """
+    f = lambda x: (jnp.sin(x) + 1)**(jnp.sin(jnp.cos(x)))
     
+    prob1_time = []
+    cdq4_time = []
+    cdq4_err = []
+    jax_time = []
+    jax_err = []
+
+    for n in range(N):
+        x0 = np.random.random()
+        #time using sympy
+        start1 = time.perf_counter()
+        df = prob1()(x0)
+        end1 = time.perf_counter()
+        prob1_time.append(end1 - start1)
+
+        #time using cdq4
+        start2 = time.perf_counter()
+        df_cdq4 = cdq4(f, x0)
+        end2 = time.perf_counter()
+        cdq4_err.append(abs(df - df_cdq4))
+        cdq4_time.append(end2 - start2)
+
+        #time using jax
+        start3 = time.perf_counter()
+        df_jax = grad(f)(x0)
+        end3 = time.perf_counter()
+        jax_err.append(abs(df - df_jax))
+        jax_time.append(end3 - start3)
+
+
+    domain = np.ones(N)
+    plt.scatter(prob1_time, domain*(1e-18), label='sympy', alpha=.25)
+    plt.scatter(cdq4_time, cdq4_err, label='cdq4', alpha=.25)
+    plt.scatter(jax_time, jax_err, label='jax', alpha=.25)
+    plt.xscale('log')
+    plt.yscale('log')
+    plt.xlabel('Computation Time')
+    plt.ylabel('Absolute Error')
+    plt.title('Computation Time v. Error')
+    plt.legend()
+    plt.tight_layout()
+    plt.show()
