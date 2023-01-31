@@ -15,6 +15,7 @@ import time as time
 # Problem 1
 def prob1():
     """Return the derivative of (sin(x) + 1)^sin(cos(x)) using SymPy."""
+    #Finds the derivative of (sin(x) + 1)^sin(cos(x)) using SymPy
     x = sy.symbols('x')
     f_prime = sy.diff((sy.sin(x) + 1)**(sy.sin(sy.cos(x))), x)
     f_prime = sy.lambdify(x, f_prime, 'numpy')
@@ -24,26 +25,32 @@ def prob1():
 # Problem 2
 def fdq1(f, x, h=1e-5):
     """Calculate the first order forward difference quotient of f at x."""
+    #First order forward difference quotient
     return (f(x + h) - f(x)) / h
 
 def fdq2(f, x, h=1e-5):
     """Calculate the second order forward difference quotient of f at x."""
+    #Second order forward difference quotient
     return (-3*f(x) + 4*f(x+h) - f(x+2*h)) / (2*h)
 
 def bdq1(f, x, h=1e-5):
     """Calculate the first order backward difference quotient of f at x."""
+    #First order backward difference quotient
     return (f(x) - f(x-h)) / h
 
 def bdq2(f, x, h=1e-5):
     """Calculate the second order backward difference quotient of f at x."""
+    #second order backward difference quotient
     return (3*f(x) - 4*f(x-h) + f(x-2*h)) / (2*h)
 
 def cdq2(f, x, h=1e-5):
     """Calculate the second order centered difference quotient of f at x."""
+    #Second order centered diffeence quotient
     return (f(x+h) - f(x-h)) / (2*h)
 
 def cdq4(f, x, h=1e-5):
     """Calculate the fourth order centered difference quotient of f at x."""
+    #Fourth order centered difference quotient
     return (f(x-2*h) - 8*f(x-h) + 8*f(x+h) - f(x+2*h)) / (12*h)
 
 
@@ -58,14 +65,21 @@ def prob3(x0):
     Parameters:
         x0 (float): The point where the derivative is being approximated.
     """
+    #lambdify function and initialize domain
     x = sy.symbols('x')
     f = sy.lambdify(x, (sy.sin(x) + 1)**(sy.sin(sy.cos(x))), 'numpy')
     h = np.logspace(-8,0,9)
+    #1st Forward
     plt.loglog(h, abs(prob1()(x0) - fdq1(f, x0, h)), label='Order 1 Forward')
+    #2nd Forward
     plt.loglog(h, abs(prob1()(x0) - fdq2(f, x0, h)), label='Order 2 Forward')
+    #1st Backward
     plt.loglog(h, abs(prob1()(x0) - bdq1(f, x0, h)), label='Order 1 Backward')
+    #2nd Backward
     plt.loglog(h, abs(prob1()(x0) - bdq2(f, x0, h)), label='Order 2 Backward')
+    #2nd Centered
     plt.loglog(h, abs(prob1()(x0) - cdq2(f, x0, h)), label='Order 2 Centered')
+    #4th Centered
     plt.loglog(h, abs(prob1()(x0) - cdq4(f, x0, h)), label='Order 4 Centered')
     plt.ylabel('Absolte Error')
     plt.xlabel('h')
@@ -99,18 +113,21 @@ def prob4():
     each t.
     """
     data = np.deg2rad(np.load('plane.npy'))
-    
+    #Find x and y in terms of t
     x = lambda t: 500 * np.tan(data[t][2]) / (np.tan(data[t][2]) - np.tan(data[t][1]))
     y = lambda t: (500 * np.tan(data[t][2]) * np.tan(data[t][1])) / (np.tan(data[t][2]) - np.tan(data[t][1]))
 
+    #First forward at t=7
     x_7 = fdq1(x, 0, 1)
     y_7 = fdq1(y, 0, 1)
     t_7 = np.sqrt(x_7**2 + y_7**2)
 
+    #First backward at t=14
     x_14 = bdq1(x, 7, 1)
     y_14 = bdq1(y, 7, 1)
     t_14 = np.sqrt(x_14**2 + y_14**2)
 
+    #t between 7 and 14 finding x and y using 2nd centered
     t_i = []
     for i in range(1,7):
           x_i = cdq2(x, i, 1)
@@ -136,9 +153,11 @@ def jacobian_cdq2(f, x, h=1e-5):
     Returns:
         ((m,n) ndarray) the Jacobian matrix of f at x.
     """
+    #Initialization
     n = len(x)
     I = np.eye(n)
     J = np.array([])
+    #2nd cenetered difference quotient
     df = [(f(x + h * I[:,i]) - f(x - h * I[:,i])) / (2 * h) for i in range(n)]
     J = np.column_stack(df)
     return J
@@ -152,10 +171,12 @@ def cheb_poly(x, n):
         x (jax.ndarray): the points to evaluate T_n(x) at.
         n (int): The degree of the polynomial.
     """
+    #Base Case
     if n == 1:
         return x
     elif n == 0:
         return jnp.ones_like(x)
+    #Compute the nth Chebyshev polynomial
     return 2 * x * cheb_poly(x, n-1) - cheb_poly(x, n-2)
 
 def prob6():
@@ -163,15 +184,17 @@ def prob6():
     of the Chebyshev polynomials, and use that function to plot the derivatives
     over the domain [-1,1] for n=0,1,2,3,4.
     """
+    #Uses jax and cheb_poly() to find the derviative of the chebyshev polynomials
     domain = jnp.linspace(-1,1, 1000)
     for n in range(0,5):
+        #Chebyshev polynomials
         poly = lambda x: cheb_poly(x, n)
         df = jnp.vectorize(grad(poly))
 
         plt.plot(domain, df(domain), label=f'n = {n}')
 
 
-    plt.title(f'Derivative of Cheby Poly')
+    plt.title('Derivative of Cheby Poly')
     plt.legend()
     plt.tight_layout()
     plt.show()
@@ -197,6 +220,7 @@ def prob7(N=200):
     with different colors for SymPy, the difference quotient, and JAX.
     For SymPy, assume an absolute error of 1e-18.
     """
+    #Initializations
     f = lambda x: (jnp.sin(x) + 1)**(jnp.sin(jnp.cos(x)))
     
     prob1_time = []
@@ -232,6 +256,7 @@ def prob7(N=200):
     plt.scatter(prob1_time, domain*(1e-18), label='sympy', alpha=.25)
     plt.scatter(cdq4_time, cdq4_err, label='cdq4', alpha=.25)
     plt.scatter(jax_time, jax_err, label='jax', alpha=.25)
+    #Ensures to scale the axis with log
     plt.xscale('log')
     plt.yscale('log')
     plt.xlabel('Computation Time')
