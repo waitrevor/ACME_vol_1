@@ -4,3 +4,37 @@ newtons_method.py has not been modified yet
 
 -------------------------------------------------------------------------------
 
+02/07/23 09:17
+
+Problem 1 (5 points):
+Score += 5
+
+Problem 2 (5 points):
+Score += 5
+
+Problem 3 (5 points):
+Score += 5
+
+Problem 4 (5 points):
+TypeError: unsupported operand type(s) for *: 'NoneType' and 'float'
+
+Problem 5 (5 points):
+Score += 5
+
+Problem 6 (10 points):
+LinAlgError: Matrix is singular.
+
+Problem 7 (10 points):
+ValueError: array must not contain infs or NaNs
+
+Code Quality (5 points):
+Score += 5
+
+Total score: 25/50 = 50.0%
+
+
+Comments:
+	These errors can be frustrating. Let me know if I can help foresee them in the future
+
+-------------------------------------------------------------------------------
+
