@@ -1,9 +1,14 @@
 # montecarlo_integration.py
 """Volume 1: Monte Carlo Integration.
-<Name>
-<Class>
-<Date>
+<Name> Trevor Wai
+<Class> Section 1
+<Date> 2/26/23
 """
+
+import numpy as np
+from scipy import linalg as la
+from matplotlib import pyplot as plt
+from scipy import stats
 
 
 # Problem 1
@@ -18,8 +23,16 @@ def ball_volume(n, N=10000):
     Returns:
         (float): An estimate for the volume of the n-dimensional unit ball.
     """
-    raise NotImplementedError("Problem 1 Incomplete")
+    #Get N random points in the n-D domain
+    points = np.random.uniform(-1, 1, (n,N))
 
+    #Determine how many points are in the circle
+    lengths = la.norm(points, axis=0, ord=2)
+
+    num_within = np.count_nonzero(lengths < 1)
+
+    #Estimate Volume
+    return 2**n * (num_within / N)
 
 # Problem 2
 def mc_integrate1d(f, a, b, N=10000):
@@ -39,7 +52,11 @@ def mc_integrate1d(f, a, b, N=10000):
         >>> mc_integrate1d(f, -4, 2)    # Integrate from -4 to 2.
         23.734810301138324              # The true value is 24.
     """
-    raise NotImplementedError("Problem 2 Incomplete")
+    #Finds the N random points
+    points = np.random.uniform(a, b, N)
+
+    #Approximates the integral
+    return (b-a)*(1/N)*np.sum(f(points))
 
 
 # Problem 3
@@ -64,7 +81,15 @@ def mc_integrate(f, mins, maxs, N=10000):
         >>> mc_integrate(f, [1, -2], [3, 1])
         53.562651072181225              # The true value is 54.
     """
-    raise NotImplementedError("Problem 3 Incomplete")
+
+    n = len(mins)
+    a = np.array(mins)
+    b = np.array(maxs)
+    #Finds the points over higher dimensional boxes
+    omeg = np.prod(b-a)
+    points = np.random.uniform(0,1,(N,n)) * (b-a) + a
+    #Evaluates Integral
+    return omeg * np.mean([f(point) for point in points])
 
 
 # Problem 4
@@ -79,4 +104,28 @@ def prob4():
     - Plot the relative error against the sample size N on a log-log scale.
         Also plot the line 1 / sqrt(N) for comparison.
     """
-    raise NotImplementedError("Problem 4 Incomplete")
+    #Find 20 integer values of N
+    domain = np.logspace(1, 5, 20).astype(int)
+
+    #Find the exact value
+    mins = np.array([-3/2, 0, 0, 0])
+    maxs = np.array([ 3/4, 1, 1/2, 1])
+    means, cov = np.zeros(4), np.eye(4)
+    F = np.array([stats.mvn.mvnun(mins, maxs, means, cov)[0] for i in domain])
+
+    #Problem 3
+    f = lambda x: (1 / (2 * np.pi)**(4/2)) * np.exp((-x.T @ x)/2)
+    approx_F = np.array([mc_integrate(f, [-3/2,0,0,0], [3/4,1,1/2,1], N=i) for i in domain])
+
+    #Calculate Relative Error
+    err = abs(F - approx_F) / abs(F)
+
+    #Plotting
+    plt.loglog(domain, err, label='Relative Error')
+    plt.loglog(domain, 1/np.sqrt(domain), label='1/√N')
+    plt.title('Error of Monte-Carlo Integration')
+    plt.xlabel('Number of samples')
+    plt.ylabel('Error')
+    plt.legend()
+    plt.tight_layout()
+    plt.show()
