@@ -1,0 +1,36 @@
+03/03/23 13:33
+
+Problem 1 (5 points):
+Score += 5
+
+Problem 2 (5 points):
+Need to describe the quantity and multiplicity of the zeros on all these plots
+Score += 3
+
+Problem 3 (5 points):
+Plots look great, but describe the poles (how many and their multiplicity) for each plot
+Score += 2
+
+Problem 4 (10 points):
+Add descriptions of zeros and poles. Your third graph is incorrect; check your denominator/paranthesis. The second plot needs to be zoomed out to capture all the information
+Score += 4
+
+Problem 5 (10 points):
+Need to describe what your plots mean as far as zeros and poles
+Score += 5
+
+Problem 6 (10 points):
+Also plot these zoomed in to gain insight into the poles/zeros. You will find something interesting in each case. Make sure to describe in writing what that is
+Score += 3
+
+Code Quality (5 points):
+Score += 5
+
+Total score: 27/50 = 54.0%
+
+
+Comments:
+	Looks great! The descriptions are the most important part of this lab. Let me know if you have questions about interpretting the plots
+
+-------------------------------------------------------------------------------
+
