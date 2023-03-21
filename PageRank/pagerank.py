@@ -1,10 +1,14 @@
 # solutions.py
 """Volume 1: The Page Rank Algorithm.
-<Name>
-<Class>
-<Date>
+<Name> Trevor Wai
+<Class> Section 1
+<Date> 3/20/23
 """
 
+import numpy as np
+import scipy.linalg as la
+import networkx as nx
+from itertools import combinations as cb
 
 # Problems 1-2
 class DiGraph:
@@ -24,7 +28,21 @@ class DiGraph:
             labels (list(str)): labels for the n nodes in the graph.
                 If None, defaults to [0, 1, ..., n-1].
         """
-        raise NotImplementedError("Problem 1 Incomplete")
+        self.n = len(A)
+
+        #Labes for the n nodes of the graph
+        if labels == None:
+            self.labels = list(np.arange(self.n))
+        else:
+            self.labels = labels
+        
+        if len(self.labels) != self.n:
+            raise ValueError('The number of labels is not equal to the number of nodes in the graph.')
+        #Removes Sinks
+        A[:, (np.sum(A, axis=0) == 0)] = 1
+        #Normalizes
+        self.A = A / np.sum(A, axis=0)
+
 
     # Problem 2
     def linsolve(self, epsilon=0.85):
@@ -36,7 +54,10 @@ class DiGraph:
         Returns:
             dict(str -> float): A dictionary mapping labels to PageRank values.
         """
-        raise NotImplementedError("Problem 2 Incomplete")
+        #Compute the Pagerank vector
+        p = la.solve(np.eye(self.n) - epsilon * self.A, (1-epsilon) * np.ones(self.n) / self.n)
+        #Maps the labesl to the PageRank
+        return dict(zip(self.labels, p))
 
     # Problem 2
     def eigensolve(self, epsilon=0.85):
@@ -49,7 +70,13 @@ class DiGraph:
         Return:
             dict(str -> float): A dictionary mapping labels to PageRank values.
         """
-        raise NotImplementedError("Problem 2 Incomplete")
+        E = np.ones((self.n, self.n))
+        #Computes the PageRank vector
+        B = epsilon * self.A + ((1-epsilon) / self.n) * E
+        eigvals, eigvects = la.eig(B)
+        u = eigvects[:,np.argmax(np.real(eigvals))]
+        #Maps the labels to the Pagerank
+        return dict(zip(self.labels, u/sum(u)))
 
     # Problem 2
     def itersolve(self, epsilon=0.85, maxiter=100, tol=1e-12):
@@ -63,7 +90,16 @@ class DiGraph:
         Return:
             dict(str -> float): A dictionary mapping labels to PageRank values.
         """
-        raise NotImplementedError("Problem 2 Incomplete")
+        #Initial
+        p0 = np.ones(self.n) / self.n
+        #Compute the PageRank Vector
+        for i in range(maxiter):
+            p = epsilon * self.A @ p0 + (1-epsilon) * np.ones(self.n) / self.n
+            if sum(abs(p-p0)) < tol:
+                break
+            p0 = p
+        #Maps the labels to the PageRank
+        return dict(zip(self.labels,p))
 
 
 # Problem 3
@@ -76,7 +112,8 @@ def get_ranks(d):
     Returns:
         (list) the keys of d, sorted by PageRank value from greatest to least.
     """
-    raise NotImplementedError("Problem 3 Incomplete")
+    #Construct a sorted list of labels based on the PageRank vector
+    return sorted(d, key=d.get, reverse=True)
 
 
 # Problem 4
@@ -99,7 +136,25 @@ def rank_websites(filename="web_stanford.txt", epsilon=0.85):
     Returns:
         (list(str)): The ranked list of webpage IDs.
     """
-    raise NotImplementedError("Problem 4 Incomplete")
+    with open(filename, 'r') as infile:
+        data = infile.read().strip()
+        #Creates a list of all the IDs
+        layout = data.replace('\n', '/').split('/')
+        unique = sorted(set(layout))
+        #Maps the ID to the index
+        web = dict(zip(unique, range(len(unique))))
+        A = np.zeros((len(unique), len(unique)))
+
+        for i in data.split('\n'):
+            i = i.split('/')
+            for site in i[1:]:
+                #Stores the sites link to the others
+                A[web[site], web[i[0]]] = 1
+
+    dg = DiGraph(A, web.keys())
+
+    return get_ranks(dg.itersolve(epsilon))
+        
 
 
 # Problem 5
@@ -120,7 +175,22 @@ def rank_ncaa_teams(filename, epsilon=0.85):
     Returns:
         (list(str)): The ranked list of team names.
     """
-    raise NotImplementedError("Problem 5 Incomplete")
+    with open(filename, 'r') as infile:
+        data = infile.read().strip()[13:]
+        #Creates list of teams
+        layout = data.replace('\n', ',').split(',')
+        unique = sorted(set(layout))
+        #Maps teams to index
+        team = dict(zip(unique, range(len(unique))))
+        A = np.zeros((len(unique), len(unique)))
+
+        for i in data.split('\n'):
+            i = i.split(',')
+            #Store which teams lost
+            A[team[i[0]], team[i[1]]] += 1
+    
+    dg = DiGraph(A, team.keys())
+    return get_ranks(dg.itersolve(epsilon))
 
 
 # Problem 6
@@ -135,4 +205,23 @@ def rank_actors(filename="top250movies.txt", epsilon=0.85):
     meaning actor2 and actor3 should each have an edge pointing to actor1,
     and actor3 should have an edge pointing to actor2.
     """
-    raise NotImplementedError("Problem 6 Incomplete")
+    dg = nx.DiGraph()
+
+    with open(filename, 'r', encoding='utf-8') as infile:
+
+        lines = infile.readlines()
+
+        for line in lines:
+            #Formatting
+            line = line.strip().split('/')[1:]
+            #Get all pairs
+            combs = cb(line, 2)
+
+            for a, b in combs:
+                #Adds edges within graph
+                if dg.has_edge(b,a):
+                    dg[b][a]['weight'] += 1
+                else:
+                    dg.add_edge(b, a, weight=1)
+
+        return get_ranks(nx.pagerank(dg, alpha=epsilon))
