@@ -4,3 +4,63 @@ profiling.py has not been modified yet
 
 -------------------------------------------------------------------------------
 
+03/28/23 10:24
+
+Problem 1 (5 points):
+max_path_fast('triangle.txt'):
+	Solution time: 0.000207901001 seconds
+	Student time:  0.000180006027 seconds (Excellent!)
+max_path_fast('triangle_large.txt'):
+	Solution time: 0.003814935684 seconds
+	Student time:  0.004446029663 seconds
+Score += 5
+
+Problem 2 (10 points):
+primes_fast(100):
+	Solution time: 0.000203847885 seconds
+	Student time:  0.000194072723 seconds (Excellent!)
+primes_fast(10001):
+	Solution time: 0.078332901001 seconds
+	Student time:  0.079704999924 seconds
+Score += 10
+
+Problem 3 (5 points):
+nearest_column_fast(), 10x15 A:
+	Solution time: 0.000123023987 seconds
+	Student time:  0.000057697296 seconds (Excellent!)
+nearest_column_fast(), 1000x1005 A:
+	Solution time: 0.013282060623 seconds
+	Student time:  0.005419969559 seconds (Excellent!)
+Score += 5
+
+Problem 4 (5 points):
+name_scores_fast():
+	Solution time: 0.007519960403 seconds
+	Student time:  0.008017301559 seconds
+Score += 5
+
+Problem 5 (5 points):
+Score += 5
+
+Problem 6 (10 points):
+list(prime_sieve(100000)):
+	Solution time: 3.540027141571 seconds
+	Student time:  0.422216892242 seconds (Excellent!)
+Score += 10
+
+Problem 7 (5 points):
+Score += 5
+
+Code Quality (5 points):
+Score += 5
+
+Total score: 50/50 = 100.0%
+
+Excellent!
+
+
+Comments:
+	Well done on this!
+
+-------------------------------------------------------------------------------
+
